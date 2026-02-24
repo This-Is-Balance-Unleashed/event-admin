@@ -1,9 +1,12 @@
 import { useRecordContext, useUpdate, useNotify, useRefresh } from 'ra-core'
+import QRCode from 'react-qr-code'
 import { Show } from '@/components/admin/show'
 import { SimpleShowLayout } from '@/components/admin/simple-show-layout'
 import { DateField } from '@/components/admin/date-field'
 import { EmailField } from '@/components/admin/email-field'
 import { RecordField } from '@/components/admin/record-field'
+import { ReferenceField } from '@/components/admin/reference-field'
+import { TextField } from '@/components/admin/text-field'
 import { Button } from '@/components/ui/button'
 import { TicketStatusBadge } from '@/components/admin/ticket-status-badge'
 import { ScanLine, CheckCircle2, AlertCircle } from 'lucide-react'
@@ -72,6 +75,19 @@ function PricePaidField() {
   return <span>₦{(record.price_paid / 100).toLocaleString()}</span>
 }
 
+function TicketQRCode() {
+  const record = useRecordContext()
+  if (!record?.ticket_secret) return null
+  return (
+    <div className="flex flex-col items-start gap-2">
+      <div className="border rounded-lg p-4 bg-white">
+        <QRCode value={record.ticket_secret} size={160} />
+      </div>
+      <p className="text-xs text-muted-foreground font-mono">{record.ticket_secret}</p>
+    </div>
+  )
+}
+
 export function TicketShow() {
   return (
     <Show>
@@ -83,7 +99,11 @@ export function TicketShow() {
         <RecordField source="status" label="Status">
           <StatusBadgeField />
         </RecordField>
-        <RecordField source="ticket_type_id" label="Ticket Type" />
+        <RecordField source="ticket_type_id" label="Ticket Type">
+          <ReferenceField source="ticket_type_id" reference="ticket_types" link={false}>
+            <TextField source="name" />
+          </ReferenceField>
+        </RecordField>
         <RecordField source="price_paid" label="Price Paid">
           <PricePaidField />
         </RecordField>
@@ -93,6 +113,9 @@ export function TicketShow() {
         </RecordField>
         <RecordField source="checked_in_at" label="Checked In At">
           <DateField source="checked_in_at" showTime emptyText="Not yet checked in" />
+        </RecordField>
+        <RecordField source="ticket_secret" label="QR Code">
+          <TicketQRCode />
         </RecordField>
         <div className="pt-4">
           <CheckInButton />
