@@ -7,7 +7,9 @@ import {
   useResourceDefinitions,
   useTranslate,
 } from "ra-core";
-import { Link, useMatch } from "react-router";
+import { tanStackRouterProvider } from "ra-router-tanstack";
+
+const { Link, useMatch } = tanStackRouterProvider;
 import { ScanLine } from "lucide-react";
 import {
   Sidebar,
