@@ -1,0 +1,51 @@
+import { createFileRoute } from '@tanstack/react-router'
+import { Resource } from 'ra-core'
+import { tanStackRouterProvider } from 'ra-router-tanstack'
+import { Ticket, Tag, ScanLine } from 'lucide-react'
+import { Admin } from '@/components/admin/admin'
+import { dataProvider } from '@/lib/supabase-provider'
+import { TicketList } from '@/components/admin/ticket-list'
+import { TicketShow } from '@/components/admin/ticket-show'
+import { CouponList } from '@/components/admin/coupon-list'
+import { CouponCreate } from '@/components/admin/coupon-create'
+import { CouponEdit } from '@/components/admin/coupon-edit'
+import { CheckInPage } from '@/components/admin/check-in-page'
+
+export const Route = createFileRoute('/admin/$')({
+  component: AdminApp,
+})
+
+const { Route: CustomRoute } = tanStackRouterProvider
+
+function AdminApp() {
+  return (
+    <Admin
+      dataProvider={dataProvider}
+      routerProvider={tanStackRouterProvider}
+      basename="/admin"
+      title="Hit Refresh Admin"
+      disableTelemetry
+    >
+      <Resource
+        name="tickets"
+        list={TicketList}
+        show={TicketShow}
+        icon={Ticket}
+        recordRepresentation={(r) => r.name ?? r.email}
+      />
+      <Resource
+        name="coupons"
+        list={CouponList}
+        create={CouponCreate}
+        edit={CouponEdit}
+        icon={Tag}
+        recordRepresentation="code"
+      />
+      <CustomRoute
+        noLayout={false}
+        path="/checkin"
+        element={<CheckInPage />}
+      />
+    </Admin>
+  )
+}
