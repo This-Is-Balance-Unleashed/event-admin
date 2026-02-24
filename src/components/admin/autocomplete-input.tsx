@@ -11,22 +11,9 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import {
-  FormControl,
-  FormError,
-  FormField,
-  FormLabel,
-} from "@/components/admin/form";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import type {
-  ChoicesProps,
-  InputProps,
-  SupportCreateSuggestionOptions,
-} from "ra-core";
+import { FormControl, FormError, FormField, FormLabel } from "@/components/admin/form";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import type { ChoicesProps, InputProps, SupportCreateSuggestionOptions } from "ra-core";
 import {
   useChoices,
   useChoicesContext,
@@ -83,9 +70,7 @@ export const AutocompleteInput = (
       filterToQuery?: (searchText: string) => any;
       translateChoice?: boolean;
       placeholder?: string;
-      inputText?:
-        | React.ReactNode
-        | ((option: any | undefined) => React.ReactNode);
+      inputText?: React.ReactNode | ((option: any | undefined) => React.ReactNode);
     },
 ) => {
   const {
@@ -108,13 +93,11 @@ export const AutocompleteInput = (
   } = useChoicesContext(props);
   const { id, field, isRequired } = useInput({ ...props, source });
   const translate = useTranslate();
-  const { placeholder = translate("ra.action.search", { _: "Search..." }) } =
-    props;
+  const { placeholder = translate("ra.action.search", { _: "Search..." }) } = props;
 
   const getRecordRepresentation = useGetRecordRepresentation(resource);
   const { getChoiceText, getChoiceValue } = useChoices({
-    optionText:
-      props.optionText ?? (isFromReference ? getRecordRepresentation : "name"),
+    optionText: props.optionText ?? (isFromReference ? getRecordRepresentation : "name"),
     optionValue: props.optionValue ?? "id",
     disableValue: props.disableValue,
     translateChoice: props.translateChoice ?? !isFromReference,
@@ -123,9 +106,7 @@ export const AutocompleteInput = (
   const [filterValue, setFilterValue] = React.useState("");
 
   const [open, setOpen] = React.useState(false);
-  const selectedChoice = allChoices.find(
-    (choice) => getChoiceValue(choice) === field.value,
-  );
+  const selectedChoice = allChoices.find((choice) => getChoiceValue(choice) === field.value);
 
   const getInputText = useCallback(
     (selectedChoice: any) => {
@@ -192,9 +173,7 @@ export const AutocompleteInput = (
   });
 
   const createItem =
-    (create || onCreate) && (filterValue !== "" || createLabel)
-      ? getCreateItem(filterValue)
-      : null;
+    (create || onCreate) && (filterValue !== "" || createLabel) ? getCreateItem(filterValue) : null;
   let finalChoices = allChoices;
   if (createItem) {
     finalChoices = [...finalChoices, createItem];
@@ -250,8 +229,7 @@ export const AutocompleteInput = (
                   <CommandEmpty>No matching item found.</CommandEmpty>
                   <CommandGroup>
                     {finalChoices.map((choice) => {
-                      const isCreateItem =
-                        !!createItem && choice?.id === createItem.id;
+                      const isCreateItem = !!createItem && choice?.id === createItem.id;
                       const disabled = getOptionDisabled(choice);
 
                       return (
@@ -271,9 +249,7 @@ export const AutocompleteInput = (
                           <Check
                             className={cn(
                               "mr-2 h-4 w-4",
-                              field.value === getChoiceValue(choice)
-                                ? "opacity-100"
-                                : "opacity-0",
+                              field.value === getChoiceValue(choice) ? "opacity-100" : "opacity-0",
                             )}
                           />
                           {getChoiceText(isCreateItem ? createItem : choice)}

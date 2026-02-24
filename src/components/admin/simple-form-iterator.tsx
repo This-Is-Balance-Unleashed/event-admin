@@ -22,21 +22,10 @@ import {
   useWrappedSource,
 } from "ra-core";
 import type { UseFieldArrayReturn } from "react-hook-form";
-import {
-  ArrowDownCircle,
-  ArrowUpCircle,
-  PlusCircle,
-  Trash,
-  XCircle,
-} from "lucide-react";
+import { ArrowDownCircle, ArrowUpCircle, PlusCircle, Trash, XCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Confirm } from "@/components/admin/confirm";
 import { IconButtonWithTooltip } from "@/components/admin/icon-button-with-tooltip";
 
@@ -102,10 +91,7 @@ export const SimpleFormIterator = (props: SimpleFormIteratorProps) => {
       <div className={cn("w-full", disabled && "disabled", className)}>
         <ul className="p-0 m-0 flex flex-col gap-2">
           {fields.map((member, index) => (
-            <RecordContextProvider
-              key={member.id}
-              value={(records && records[index]) || {}}
-            >
+            <RecordContextProvider key={member.id} value={(records && records[index]) || {}}>
               <SimpleFormIteratorItem
                 disabled={disabled}
                 disableRemove={disableRemove}
@@ -173,10 +159,7 @@ export interface SimpleFormIteratorProps extends Partial<UseFieldArrayReturn> {
  * // Typically used internally by SimpleFormIterator
  */
 export const SimpleFormIteratorItem = React.forwardRef(
-  (
-    props: SimpleFormIteratorItemProps,
-    ref: React.ForwardedRef<HTMLLIElement>,
-  ) => {
+  (props: SimpleFormIteratorItemProps, ref: React.ForwardedRef<HTMLLIElement>) => {
     const {
       children,
       disabled,
@@ -196,9 +179,7 @@ export const SimpleFormIteratorItem = React.forwardRef(
     }
     const record = useRecordContext(props);
     if (!record) {
-      throw new Error(
-        "SimpleFormIteratorItem must be used in a RecordContextProvider.",
-      );
+      throw new Error("SimpleFormIteratorItem must be used in a RecordContextProvider.");
     }
     // Returns a boolean to indicate whether to disable the remove button for certain fields.
     // If disableRemove is a function, then call the function with the current record to
@@ -211,8 +192,7 @@ export const SimpleFormIteratorItem = React.forwardRef(
       return disableRemove && disableRemove(record);
     };
 
-    const label =
-      typeof getItemLabel === "function" ? getItemLabel(index) : getItemLabel;
+    const label = typeof getItemLabel === "function" ? getItemLabel(index) : getItemLabel;
 
     return (
       <SimpleFormIteratorItemBase {...props}>
@@ -228,10 +208,7 @@ export const SimpleFormIteratorItem = React.forwardRef(
             <p className="text-sm text-muted-foreground mb-2">{label}</p>
           )}
           <div
-            className={cn(
-              "flex flex-1 gap-2",
-              inline ? "flex-col sm:flex-row gap-2" : "flex-col",
-            )}
+            className={cn("flex flex-1 gap-2", inline ? "flex-col sm:flex-row gap-2" : "flex-col")}
           >
             {children}
           </div>
@@ -319,13 +296,7 @@ export const ReOrderButtons = ({ className }: { className?: string }) => {
   const { source } = useSimpleFormIterator();
 
   return (
-    <span
-      className={cn(
-        "button-reorder",
-        `button-reorder-${source}-${index}`,
-        className,
-      )}
-    >
+    <span className={cn("button-reorder", `button-reorder-${source}-${index}`, className)}>
       <IconButtonWithTooltip
         label="ra.action.move_up"
         onClick={() => reOrder(index - 1)}
@@ -371,10 +342,7 @@ export const SimpleFormIteratorClearButton = ({
         onConfirm={handleArrayClear}
         onClose={() => setConfirmIsOpen(false)}
       />
-      <ClearArrayButton
-        className={className}
-        onClick={() => setConfirmIsOpen(true)}
-      />
+      <ClearArrayButton className={className} onClick={() => setConfirmIsOpen(true)} />
     </>
   );
 };
@@ -406,9 +374,7 @@ export const ClearArrayButton = (props: React.ComponentProps<"button">) => {
             <Trash className="h-5 w-5 text-red-500" />
           </Button>
         </TooltipTrigger>
-        <TooltipContent>
-          {translate("ra.action.clear_array_input")}
-        </TooltipContent>
+        <TooltipContent>{translate("ra.action.clear_array_input")}</TooltipContent>
       </Tooltip>
     </TooltipProvider>
   );
@@ -444,11 +410,7 @@ export const RemoveItemButton = (props: React.ComponentProps<"button">) => {
             variant="ghost"
             size="icon"
             onClick={() => remove()}
-            className={cn(
-              "button-remove",
-              `button-remove-${source}-${index}`,
-              className,
-            )}
+            className={cn("button-remove", `button-remove-${source}-${index}`, className)}
             {...rest}
           >
             <XCircle className="h-5 w-5 text-red-500" />

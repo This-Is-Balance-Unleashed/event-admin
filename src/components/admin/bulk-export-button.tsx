@@ -58,11 +58,10 @@ export const BulkExportButton = <T extends RaRecord>({
 
 const defaultIcon = <Download className="h-4 w-4" />;
 
-export type BulkExportButtonProps<T extends RaRecord> =
-  UseBulkExportOptions<T> & {
-    icon?: React.ReactNode;
-    label?: string;
-  } & React.ComponentProps<typeof Button>;
+export type BulkExportButtonProps<T extends RaRecord> = UseBulkExportOptions<T> & {
+  icon?: React.ReactNode;
+  label?: string;
+} & React.ComponentProps<typeof Button>;
 
 const sanitizeRestProps = <T extends RaRecord>({
   resource: _resource,

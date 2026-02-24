@@ -30,10 +30,7 @@ export type CreateButtonProps = {
  *   </List>
  * );
  */
-export const CreateButton = ({
-  label,
-  resource: targetResource,
-}: CreateButtonProps) => {
+export const CreateButton = ({ label, resource: targetResource }: CreateButtonProps) => {
   const resource = useResourceContext();
   const createPath = useCreatePath();
   const link = createPath({
@@ -41,15 +38,9 @@ export const CreateButton = ({
     type: "create",
   });
   return (
-    <Link
-      className={buttonVariants({ variant: "outline" })}
-      to={link}
-      onClick={stopPropagation}
-    >
+    <Link className={buttonVariants({ variant: "outline" })} to={link} onClick={stopPropagation}>
       <Plus />
-      <Translate i18nKey={label ?? "ra.action.create"}>
-        {label ?? "Create"}
-      </Translate>
+      <Translate i18nKey={label ?? "ra.action.create"}>{label ?? "Create"}</Translate>
     </Link>
   );
 };

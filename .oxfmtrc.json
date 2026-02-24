@@ -1,0 +1,3 @@
+{
+  "ignorePatterns": ["dist/**", "*.min.js", "src/routeTree.gen.ts"]
+}

@@ -1,8 +1,4 @@
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbPage,
-} from "@/components/admin/breadcrumb";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbPage } from "@/components/admin/breadcrumb";
 import type { ListBaseProps, ListControllerResult, RaRecord } from "ra-core";
 import {
   FilterContext,
@@ -50,9 +46,7 @@ import { FilterButton, FilterForm } from "@/components/admin/filter-form";
  *   </List>
  * );
  */
-export const List = <RecordType extends RaRecord = RaRecord>(
-  props: ListProps<RecordType>,
-) => {
+export const List = <RecordType extends RaRecord = RaRecord>(props: ListProps<RecordType>) => {
   const {
     debounce,
     disableAuthentication,
@@ -111,9 +105,7 @@ export const ListView = <RecordType extends RaRecord = RaRecord>(
   const translate = useTranslate();
   const resource = useResourceContext();
   if (!resource) {
-    throw new Error(
-      "The ListView component must be used within a ResourceContextProvider",
-    );
+    throw new Error("The ListView component must be used within a ResourceContextProvider");
   }
   const getResourceLabel = useGetResourceLabel();
   const resourceLabel = getResourceLabel(resource, 2);
@@ -143,9 +135,7 @@ export const ListView = <RecordType extends RaRecord = RaRecord>(
 
       <FilterContext.Provider value={filters}>
         <div className="flex justify-between items-start flex-wrap gap-2 my-2">
-          <h2 className="text-2xl font-bold tracking-tight mb-2">
-            {finalTitle}
-          </h2>
+          <h2 className="text-2xl font-bold tracking-tight mb-2">{finalTitle}</h2>
           {actions ?? (
             <div className="flex items-center gap-2">
               {filters && filters.length > 0 ? <FilterButton /> : null}
@@ -182,9 +172,7 @@ export const Empty = () => {
       </h2>
       {hasCreate ? (
         <>
-          <p className="text-muted-foreground">
-            {translate("ra.page.invite")}
-          </p>
+          <p className="text-muted-foreground">{translate("ra.page.invite")}</p>
           <CreateButton />
         </>
       ) : null}

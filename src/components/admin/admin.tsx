@@ -25,9 +25,7 @@ const defaultStore = localStorageStore();
  *
  * @internal
  */
-const AdminContext = (props: CoreAdminContextProps) => (
-  <CoreAdminContext {...props} />
-);
+const AdminContext = (props: CoreAdminContextProps) => <CoreAdminContext {...props} />;
 
 /**
  * UI component for the Admin application.

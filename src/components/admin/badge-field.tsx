@@ -46,9 +46,7 @@ export const BadgeField = <RecordType extends RaRecord = RaRecord>({
   const translate = useTranslate();
 
   if (value == null) {
-    return empty && typeof empty === "string"
-      ? translate(empty, { _: empty })
-      : empty;
+    return empty && typeof empty === "string" ? translate(empty, { _: empty }) : empty;
   }
 
   return (

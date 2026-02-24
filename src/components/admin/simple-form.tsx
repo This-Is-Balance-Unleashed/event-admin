@@ -32,10 +32,7 @@ export const SimpleForm = ({
   toolbar = defaultFormToolbar,
   ...rest
 }: SimpleFormProps) => (
-  <Form
-    className={cn(`flex flex-col gap-4 w-full max-w-lg`, className)}
-    {...rest}
-  >
+  <Form className={cn(`flex flex-col gap-4 w-full max-w-lg`, className)} {...rest}>
     {children}
     {toolbar}
   </Form>
@@ -57,11 +54,7 @@ export const SimpleForm = ({
  *     </FormToolbar>
  * );
  */
-export const FormToolbar = ({
-  children,
-  className,
-  ...rest
-}: FormToolbarProps) => (
+export const FormToolbar = ({ children, className, ...rest }: FormToolbarProps) => (
   <div
     {...rest}
     className={cn(

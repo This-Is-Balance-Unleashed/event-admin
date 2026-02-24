@@ -1,25 +1,9 @@
 import * as React from "react";
-import type {
-  ComponentType,
-  ReactElement,
-  ReactNode,
-  HTMLAttributes,
-} from "react";
+import type { ComponentType, ReactElement, ReactNode, HTMLAttributes } from "react";
 import { Children, isValidElement, useEffect } from "react";
 import type { InputProps } from "ra-core";
-import {
-  FieldTitle,
-  RecordContextProvider,
-  shallowEqual,
-  useInput,
-  useTranslate,
-} from "ra-core";
-import type {
-  DropzoneOptions,
-  FileRejection,
-  DropEvent,
-  DropzoneInputProps,
-} from "react-dropzone";
+import { FieldTitle, RecordContextProvider, shallowEqual, useInput, useTranslate } from "ra-core";
+import type { DropzoneOptions, FileRejection, DropEvent, DropzoneInputProps } from "react-dropzone";
 import { useDropzone } from "react-dropzone";
 import { XCircle } from "lucide-react";
 
@@ -179,9 +163,7 @@ export const FileInput = (props: FileInputProps) => {
     }
 
     if (multiple) {
-      const filteredFiles = files.filter(
-        (stateFile) => !shallowEqual(stateFile, file),
-      );
+      const filteredFiles = files.filter((stateFile) => !shallowEqual(stateFile, file));
       onChange(filteredFiles);
       onBlur();
     } else {
@@ -210,22 +192,12 @@ export const FileInput = (props: FileInputProps) => {
   });
 
   return (
-    <FormField
-      id={id}
-      name={name}
-      className={cn("w-full", className)}
-      {...rest}
-    >
+    <FormField id={id} name={name} className={cn("w-full", className)} {...rest}>
       <FormLabel
         htmlFor={id}
         className={disabled || readOnly ? "cursor-default" : "cursor-pointer"}
       >
-        <FieldTitle
-          label={label}
-          source={source}
-          resource={resource}
-          isRequired={isRequired}
-        />
+        <FieldTitle label={label} source={source} resource={resource} isRequired={isRequired} />
       </FormLabel>
 
       <div
@@ -270,9 +242,7 @@ export const FileInput = (props: FileInputProps) => {
                 onRemove={onRemove(file)}
                 removeIcon={removeIcon}
               >
-                <RecordContextProvider value={file}>
-                  {childrenElement}
-                </RecordContextProvider>
+                <RecordContextProvider value={file}>{childrenElement}</RecordContextProvider>
               </FileInputPreview>
             ))
           }

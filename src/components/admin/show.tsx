@@ -1,8 +1,4 @@
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbPage,
-} from "@/components/admin/breadcrumb";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbPage } from "@/components/admin/breadcrumb";
 import type { ShowBaseProps } from "ra-core";
 import {
   ShowBase,
@@ -20,8 +16,7 @@ import { Link } from "@/lib/router";
 import { cn } from "@/lib/utils";
 import { EditButton } from "@/components/admin/edit-button";
 
-export interface ShowProps
-  extends ShowViewProps, Omit<ShowBaseProps, "children"> {}
+export interface ShowProps extends ShowViewProps, Omit<ShowBaseProps, "children"> {}
 
 /**
  * A complete show page with breadcrumb, title, and default actions.
@@ -120,9 +115,7 @@ export const ShowView = ({
 
   const resource = useResourceContext();
   if (!resource) {
-    throw new Error(
-      "The ShowView component must be used within a ResourceContextProvider",
-    );
+    throw new Error("The ShowView component must be used within a ResourceContextProvider");
   }
   const getResourceLabel = useGetResourceLabel();
   const listLabel = getResourceLabel(resource, 2);
@@ -162,19 +155,12 @@ export const ShowView = ({
           <BreadcrumbPage>{recordRepresentation}</BreadcrumbPage>
         </Breadcrumb>
       )}
-      <div
-        className={cn(
-          "flex justify-between items-start flex-wrap gap-2 my-2",
-          className,
-        )}
-      >
+      <div className={cn("flex justify-between items-start flex-wrap gap-2 my-2", className)}>
         <h2 className="text-2xl font-bold tracking-tight">
           {title !== undefined ? title : context.defaultTitle}
         </h2>
         {actions ?? (
-          <div className="flex justify-end items-center">
-            {hasEdit ? <EditButton /> : null}
-          </div>
+          <div className="flex justify-end items-center">{hasEdit ? <EditButton /> : null}</div>
         )}
       </div>
       <div className="my-2">{children}</div>

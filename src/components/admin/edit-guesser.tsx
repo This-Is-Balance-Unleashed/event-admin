@@ -63,11 +63,7 @@ const EditViewGuesser = (props: EditGuesserProps) => {
   useEffect(() => {
     if (record && !child) {
       const inferredElements = getElementsFromRecords([record], editFieldTypes);
-      const inferredChild = new InferredElement(
-        editFieldTypes.form,
-        null,
-        inferredElements,
-      );
+      const inferredChild = new InferredElement(editFieldTypes.form, null, inferredElements);
       setChild(inferredChild.getElement());
 
       if (!enableLog) return;
@@ -91,12 +87,7 @@ const EditViewGuesser = (props: EditGuesserProps) => {
         `Guessed Edit:
 
 ${components
-  .map(
-    (component) =>
-      `import { ${component} } from "@/components/admin/${kebabCase(
-        component,
-      )}";`,
-  )
+  .map((component) => `import { ${component} } from "@/components/admin/${kebabCase(component)}";`)
   .join("\n")}
 
 export const ${capitalize(singularize(resource))}Edit = () => (
@@ -122,9 +113,7 @@ const editFieldTypes: InferredTypeMap = {
       _props: any,
       children: { getRepresentation: () => string }[],
     ) => `        <SimpleForm>
-${children
-  .map((child) => `            ${child.getRepresentation()}`)
-  .join("\n")}
+${children.map((child) => `            ${child.getRepresentation()}`).join("\n")}
         </SimpleForm>`,
   },
   reference: {

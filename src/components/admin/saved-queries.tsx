@@ -1,9 +1,4 @@
-import {
-  extractValidSavedQueries,
-  useListContext,
-  useSavedQueries,
-  useTranslate,
-} from "ra-core";
+import { extractValidSavedQueries, useListContext, useSavedQueries, useTranslate } from "ra-core";
 import type { ChangeEvent, FormEvent, ReactElement } from "react";
 import { useState } from "react";
 import isEqual from "lodash/isEqual";
@@ -27,21 +22,15 @@ import { Label } from "@/components/ui/label";
  *
  * @internal
  */
-export const AddSavedQueryDialog = ({
-  open,
-  onClose,
-}: AddSavedQueryDialogProps): ReactElement => {
+export const AddSavedQueryDialog = ({ open, onClose }: AddSavedQueryDialogProps): ReactElement => {
   const translate = useTranslate();
-  const { resource, filterValues, displayedFilters, sort, perPage } =
-    useListContext();
+  const { resource, filterValues, displayedFilters, sort, perPage } = useListContext();
 
   const [savedQueries, setSavedQueries] = useSavedQueries(resource);
 
   // input state
   const [queryName, setQueryName] = useState("");
-  const handleQueryNameChange = (
-    event: ChangeEvent<HTMLInputElement>,
-  ): void => {
+  const handleQueryNameChange = (event: ChangeEvent<HTMLInputElement>): void => {
     setQueryName(event.target.value);
   };
 
@@ -83,11 +72,7 @@ export const AddSavedQueryDialog = ({
                 _: "Query name",
               })}
             </Label>
-            <Input
-              id="name"
-              value={queryName}
-              onChange={handleQueryNameChange}
-            />
+            <Input id="name" value={queryName} onChange={handleQueryNameChange} />
           </div>
         </form>
         <DialogFooter>
@@ -116,8 +101,7 @@ export const RemoveSavedQueryDialog = ({
   onClose,
 }: RemoveSavedQueryDialogProps): ReactElement => {
   const translate = useTranslate();
-  const { resource, filterValues, sort, perPage, displayedFilters } =
-    useListContext();
+  const { resource, filterValues, sort, perPage, displayedFilters } = useListContext();
 
   const [savedQueries, setSavedQueries] = useSavedQueries(resource);
 
@@ -133,10 +117,7 @@ export const RemoveSavedQueryDialog = ({
     const index = newSavedQueries.findIndex((savedFilter) =>
       isEqual(savedFilter.value, savedQueryToRemove),
     );
-    setSavedQueries([
-      ...newSavedQueries.slice(0, index),
-      ...newSavedQueries.slice(index + 1),
-    ]);
+    setSavedQueries([...newSavedQueries.slice(0, index), ...newSavedQueries.slice(index + 1)]);
     onClose();
   };
 
@@ -159,9 +140,7 @@ export const RemoveSavedQueryDialog = ({
           <Button variant="outline" onClick={onClose}>
             {translate("ra.action.cancel")}
           </Button>
-          <Button onClick={removeQuery}>
-            {translate("ra.action.confirm")}
-          </Button>
+          <Button onClick={removeQuery}>{translate("ra.action.confirm")}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

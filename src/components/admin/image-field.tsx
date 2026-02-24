@@ -1,11 +1,6 @@
 import type { HTMLAttributes } from "react";
 import get from "lodash/get.js";
-import {
-  type ExtractRecordPaths,
-  type HintedString,
-  useFieldValue,
-  useTranslate,
-} from "ra-core";
+import { type ExtractRecordPaths, type HintedString, useFieldValue, useTranslate } from "ra-core";
 import { cn } from "@/lib/utils";
 
 import type { FieldProps } from "@/lib/field.type";
@@ -28,9 +23,7 @@ import type { FieldProps } from "@/lib/field.type";
  *     }
  * />
  */
-export const ImageField = <
-  RecordType extends Record<string, any> = Record<string, any>,
->(
+export const ImageField = <RecordType extends Record<string, any> = Record<string, any>>(
   props: ImageFieldProps<RecordType>,
 ) => {
   const { src, defaultValue, source, record, empty, title, ...rest } = props;
@@ -67,11 +60,7 @@ export const ImageField = <
 
             return (
               <li key={index}>
-                <img
-                  alt={fileTitleValue}
-                  title={fileTitleValue}
-                  src={srcValue}
-                />
+                <img alt={fileTitleValue} title={fileTitleValue} src={srcValue} />
               </li>
             );
           })}
@@ -90,9 +79,7 @@ export const ImageField = <
 // What? TypeScript loses the displayName if we don't set it explicitly
 ImageField.displayName = "ImageField";
 
-export interface ImageFieldProps<
-  RecordType extends Record<string, any> = Record<string, any>,
->
+export interface ImageFieldProps<RecordType extends Record<string, any> = Record<string, any>>
   extends FieldProps<RecordType>, HTMLAttributes<HTMLSpanElement> {
   defaultValue?: any;
   src?: string;

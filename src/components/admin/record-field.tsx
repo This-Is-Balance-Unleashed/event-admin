@@ -1,12 +1,7 @@
 import type { ReactNode, ElementType, HTMLAttributes } from "react";
 import { createElement } from "react";
 import type { ExtractRecordPaths, HintedString } from "ra-core";
-import {
-  FieldTitle,
-  useRecordContext,
-  useResourceContext,
-  useTranslate,
-} from "ra-core";
+import { FieldTitle, useRecordContext, useResourceContext, useTranslate } from "ra-core";
 import { cn } from "@/lib/utils";
 
 import { TextField } from "@/components/admin/text-field";
@@ -41,9 +36,7 @@ import { TextField } from "@/components/admin/text-field";
  *   </Show>
  * );
  */
-export const RecordField = <
-  RecordType extends Record<string, any> = Record<string, any>,
->(
+export const RecordField = <RecordType extends Record<string, any> = Record<string, any>>(
   props: RecordFieldProps<RecordType>,
 ) => {
   const {
@@ -67,11 +60,7 @@ export const RecordField = <
 
   return (
     <div
-      className={cn(
-        className,
-        "flex",
-        variant === "inline" ? "flex-row" : "flex-col",
-      )}
+      className={cn(className, "flex", variant === "inline" ? "flex-row" : "flex-col")}
       {...rest}
     >
       {label !== "" && label !== false ? (
@@ -81,12 +70,7 @@ export const RecordField = <
             "text-muted-foreground",
           )}
         >
-          <FieldTitle
-            label={label}
-            source={source}
-            resource={resource}
-            isRequired={false}
-          />
+          <FieldTitle label={label} source={source} resource={resource} isRequired={false} />
         </div>
       ) : null}
       {children ? (
@@ -94,10 +78,7 @@ export const RecordField = <
       ) : render ? (
         record && (
           <span className="flex-1">
-            {render(record) ||
-              (typeof empty === "string"
-                ? translate(empty, { _: empty })
-                : empty)}
+            {render(record) || (typeof empty === "string" ? translate(empty, { _: empty }) : empty)}
           </span>
         )
       ) : field ? (

@@ -57,15 +57,12 @@ export const ToggleFilterButton = ({
 };
 
 const toggleFilter = (value: any, filters: any) => {
-  const isSelected = matches(
-    pickBy(value, (val) => typeof val !== "undefined"),
-  )(filters);
+  const isSelected = matches(pickBy(value, (val) => typeof val !== "undefined"))(filters);
 
   if (isSelected) {
     const keysToRemove = Object.keys(value);
     return Object.keys(filters).reduce(
-      (acc, key) =>
-        keysToRemove.includes(key) ? acc : { ...acc, [key]: filters[key] },
+      (acc, key) => (keysToRemove.includes(key) ? acc : { ...acc, [key]: filters[key] }),
       {},
     );
   }

@@ -42,8 +42,7 @@ export const Notification = (props: ToasterProps) => {
       const notification = takeNotification();
       if (notification) {
         const { message, type = "info", notificationOptions } = notification;
-        const { messageArgs, undoable, autoHideDuration } =
-          notificationOptions || {};
+        const { messageArgs, undoable, autoHideDuration } = notificationOptions || {};
 
         const beforeunload = (e: BeforeUnloadEvent) => {
           e.preventDefault();
@@ -82,8 +81,7 @@ export const Notification = (props: ToasterProps) => {
               : undefined
           : undefined;
 
-        const duration =
-          autoHideDuration === null ? Infinity : autoHideDuration;
+        const duration = autoHideDuration === null ? Infinity : autoHideDuration;
 
         toast[type](finalMessage, {
           duration,
@@ -107,13 +105,7 @@ export const Notification = (props: ToasterProps) => {
 
   return (
     <CloseNotificationContext.Provider value={handleRequestClose}>
-      <Toaster
-        richColors
-        theme={theme}
-        closeButton
-        position="bottom-center"
-        {...props}
-      />
+      <Toaster richColors theme={theme} closeButton position="bottom-center" {...props} />
     </CloseNotificationContext.Provider>
   );
 };

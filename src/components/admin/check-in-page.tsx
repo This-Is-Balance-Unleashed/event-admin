@@ -1,5 +1,5 @@
-import { ScanLine } from 'lucide-react'
-import { CheckInForm } from '@/components/admin/check-in-form'
+import { ScanLine } from "lucide-react";
+import { CheckInForm } from "@/components/admin/check-in-form";
 
 export function CheckInPage() {
   return (
@@ -17,5 +17,5 @@ export function CheckInPage() {
       </div>
       <CheckInForm />
     </div>
-  )
+  );
 }

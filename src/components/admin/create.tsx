@@ -1,8 +1,4 @@
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbPage,
-} from "@/components/admin/breadcrumb";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbPage } from "@/components/admin/breadcrumb";
 import type { CreateBaseProps } from "ra-core";
 import {
   CreateBase,
@@ -83,9 +79,7 @@ export const CreateView = ({
 
   const resource = useResourceContext();
   if (!resource) {
-    throw new Error(
-      "The CreateView component must be used within a ResourceContextProvider",
-    );
+    throw new Error("The CreateView component must be used within a ResourceContextProvider");
   }
   const getResourceLabel = useGetResourceLabel();
   const listLabel = getResourceLabel(resource, 2);
@@ -115,12 +109,7 @@ export const CreateView = ({
           </BreadcrumbPage>
         </Breadcrumb>
       )}
-      <div
-        className={cn(
-          "flex justify-between items-start flex-wrap gap-2 my-2",
-          className,
-        )}
-      >
+      <div className={cn("flex justify-between items-start flex-wrap gap-2 my-2", className)}>
         <h2 className="text-2xl font-bold tracking-tight">
           {title !== undefined ? title : context.defaultTitle}
         </h2>

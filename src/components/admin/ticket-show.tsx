@@ -1,83 +1,83 @@
-import { useRecordContext, useUpdate, useNotify, useRefresh } from 'ra-core'
-import QRCode from 'react-qr-code'
-import { Show } from '@/components/admin/show'
-import { SimpleShowLayout } from '@/components/admin/simple-show-layout'
-import { DateField } from '@/components/admin/date-field'
-import { EmailField } from '@/components/admin/email-field'
-import { RecordField } from '@/components/admin/record-field'
-import { ReferenceField } from '@/components/admin/reference-field'
-import { TextField } from '@/components/admin/text-field'
-import { Button } from '@/components/ui/button'
-import { TicketStatusBadge } from '@/components/admin/ticket-status-badge'
-import { ScanLine, CheckCircle2, AlertCircle } from 'lucide-react'
+import { useRecordContext, useUpdate, useNotify, useRefresh } from "ra-core";
+import QRCode from "react-qr-code";
+import { Show } from "@/components/admin/show";
+import { SimpleShowLayout } from "@/components/admin/simple-show-layout";
+import { DateField } from "@/components/admin/date-field";
+import { EmailField } from "@/components/admin/email-field";
+import { RecordField } from "@/components/admin/record-field";
+import { ReferenceField } from "@/components/admin/reference-field";
+import { TextField } from "@/components/admin/text-field";
+import { Button } from "@/components/ui/button";
+import { TicketStatusBadge } from "@/components/admin/ticket-status-badge";
+import { ScanLine, CheckCircle2, AlertCircle } from "lucide-react";
 
 function CheckInButton() {
-  const record = useRecordContext()
-  const [update, { isPending }] = useUpdate()
-  const notify = useNotify()
-  const refresh = useRefresh()
+  const record = useRecordContext();
+  const [update, { isPending }] = useUpdate();
+  const notify = useNotify();
+  const refresh = useRefresh();
 
-  if (!record) return null
+  if (!record) return null;
 
-  if (record.status === 'used') {
+  if (record.status === "used") {
     return (
       <div className="flex items-center gap-2 text-muted-foreground text-sm">
         <CheckCircle2 className="size-4 text-green-500" />
         Checked in at {new Date(record.checked_in_at).toLocaleString()}
       </div>
-    )
+    );
   }
 
-  if (record.status !== 'paid') {
+  if (record.status !== "paid") {
     return (
       <div className="flex items-center gap-2 text-amber-600 text-sm">
         <AlertCircle className="size-4" />
         Cannot check in — ticket status is &ldquo;{record.status}&rdquo;
       </div>
-    )
+    );
   }
 
   const handleCheckIn = () => {
     update(
-      'tickets',
+      "tickets",
       {
         id: record.id,
-        data: { status: 'used', checked_in_at: new Date().toISOString() },
+        data: { status: "used", checked_in_at: new Date().toISOString() },
         previousData: record,
       },
       {
         onSuccess: () => {
-          notify('Ticket checked in successfully', { type: 'success' })
-          refresh()
+          notify("Ticket checked in successfully", { type: "success" });
+          refresh();
         },
-        onError: () => notify('Check-in failed', { type: 'error' }),
-      }
-    )
-  }
+        onError: () => notify("Check-in failed", { type: "error" }),
+      },
+    );
+  };
 
   return (
     <Button onClick={handleCheckIn} disabled={isPending} size="lg" className="gap-2">
       <ScanLine className="size-4" />
-      {isPending ? 'Checking in…' : 'Check In'}
+      {isPending ? "Checking in…" : "Check In"}
     </Button>
-  )
+  );
 }
 
 function StatusBadgeField() {
-  const record = useRecordContext()
-  if (!record) return null
-  return <TicketStatusBadge status={record.status} />
+  const record = useRecordContext();
+  if (!record) return null;
+  return <TicketStatusBadge status={record.status} />;
 }
 
 function PricePaidField() {
-  const record = useRecordContext()
-  if (!record) return null
-  return <span>₦{(record.price_paid / 100).toLocaleString()}</span>
+  const record = useRecordContext();
+  if (!record) return null;
+  return <span>₦{(record.price_paid / 100).toLocaleString()}</span>;
 }
 
 function TicketQRCode() {
-  const record = useRecordContext()
-  if (!record?.ticket_secret) return null
+  const record = useRecordContext();
+  if (!record?.ticket_secret) return null;
   return (
     <div className="flex flex-col items-start gap-2">
       <div className="border rounded-lg p-4 bg-white">
@@ -85,7 +85,7 @@ function TicketQRCode() {
       </div>
       <p className="text-xs text-muted-foreground font-mono">{record.ticket_secret}</p>
     </div>
-  )
+  );
 }
 
 export function TicketShow() {
@@ -122,5 +122,5 @@ export function TicketShow() {
         </div>
       </SimpleShowLayout>
     </Show>
-  )
+  );
 }

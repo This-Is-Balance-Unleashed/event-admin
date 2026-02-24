@@ -83,23 +83,12 @@ export interface ReferenceFieldProps<
 }
 
 // useful to prevent click bubbling in a datagrid with rowClick
-const stopPropagation = (e: MouseEvent<HTMLAnchorElement>) =>
-  e.stopPropagation();
+const stopPropagation = (e: MouseEvent<HTMLAnchorElement>) => e.stopPropagation();
 
-export const ReferenceFieldView = <
-  ReferenceRecordType extends RaRecord = RaRecord,
->(
+export const ReferenceFieldView = <ReferenceRecordType extends RaRecord = RaRecord>(
   props: ReferenceFieldViewProps<ReferenceRecordType>,
 ) => {
-  const {
-    children,
-    className,
-    empty,
-    error: errorElement,
-    render,
-    reference,
-    loading,
-  } = props;
+  const { children, className, empty, error: errorElement, render, reference, loading } = props;
   const referenceFieldContext = useReferenceFieldContext();
   const { error, link, isPending, referenceRecord } = referenceFieldContext;
   const getRecordRepresentation = useGetRecordRepresentation(reference);
@@ -112,11 +101,7 @@ export const ReferenceFieldView = <
     return loading;
   }
   if (!referenceRecord && empty !== false) {
-    return typeof empty === "string" ? (
-      <>{empty && translate(empty, { _: empty })}</>
-    ) : (
-      empty
-    );
+    return typeof empty === "string" ? <>{empty && translate(empty, { _: empty })}</> : empty;
   }
 
   const child = render
@@ -136,9 +121,7 @@ export const ReferenceFieldView = <
   return <>{child}</>;
 };
 
-export interface ReferenceFieldViewProps<
-  ReferenceRecordType extends RaRecord = RaRecord,
-> {
+export interface ReferenceFieldViewProps<ReferenceRecordType extends RaRecord = RaRecord> {
   children?: ReactNode;
   className?: string;
   empty?: ReactNode;

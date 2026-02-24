@@ -2,12 +2,7 @@ import * as React from "react";
 import clsx from "clsx";
 import type { InputProps } from "ra-core";
 import { useInput, FieldTitle } from "ra-core";
-import {
-  FormControl,
-  FormError,
-  FormField,
-  FormLabel,
-} from "@/components/admin/form";
+import { FormControl, FormError, FormField, FormLabel } from "@/components/admin/form";
 import { Input } from "@/components/ui/input";
 import { InputHelperText } from "@/components/admin/input-helper-text";
 
@@ -109,16 +104,12 @@ export const DateTimeInput = ({
     if (onChange) {
       onChange(event);
     }
-    if (
-      typeof event.target === "undefined" ||
-      typeof event.target.value === "undefined"
-    ) {
+    if (typeof event.target === "undefined" || typeof event.target.value === "undefined") {
       return;
     }
     const target = event.target;
     const newValue = target.value;
-    const isNewValueValid =
-      newValue === "" || !isNaN(new Date(target.value).getTime());
+    const isNewValueValid = newValue === "" || !isNaN(new Date(target.value).getTime());
 
     // Some browsers will return null for an invalid date
     // so we only change react-hook-form value if it's not null.
@@ -148,8 +139,7 @@ export const DateTimeInput = ({
     // To ensure users can clear the input, we check its value on blur
     // and submit it to react-hook-form
     const isNewValueValid =
-      newValue === "" ||
-      !isNaN(new Date(localInputRef.current.value).getTime());
+      newValue === "" || !isNaN(new Date(localInputRef.current.value).getTime());
 
     if (isNewValueValid && field.value !== newValue) {
       field.onChange(newValue ?? "");
@@ -167,12 +157,7 @@ export const DateTimeInput = ({
     <FormField id={id} className={className} name={field.name}>
       {label !== false && (
         <FormLabel>
-          <FieldTitle
-            label={label}
-            source={source}
-            resource={resource}
-            isRequired={isRequired}
-          />
+          <FieldTitle label={label} source={source} resource={resource} isRequired={isRequired} />
         </FormLabel>
       )}
       <FormControl>

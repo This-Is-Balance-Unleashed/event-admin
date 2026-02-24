@@ -120,12 +120,7 @@ export const Confirm = (props: ConfirmProps) => {
           )}
         </DialogHeader>
         <DialogFooter>
-          <Button
-            variant="ghost"
-            disabled={loading}
-            onClick={onClose}
-            className="gap-1"
-          >
+          <Button variant="ghost" disabled={loading} onClick={onClose} className="gap-1">
             <CancelIcon className="h-5 w-5" />
             {translate(cancel, { _: cancel })}
           </Button>

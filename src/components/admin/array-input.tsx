@@ -72,12 +72,7 @@ export const ArrayInput = (props: ArrayInputProps) => {
 
   return (
     <FormField
-      className={cn(
-        "ra-input",
-        `ra-input-${finalSource}`,
-        className,
-        "w-full flex flex-col gap-2",
-      )}
+      className={cn("ra-input", `ra-input-${finalSource}`, className, "w-full flex flex-col gap-2")}
       name={finalSource}
       {...sanitizeInputRestProps(rest)}
     >
@@ -99,10 +94,7 @@ export const ArrayInput = (props: ArrayInputProps) => {
   );
 };
 
-export interface ArrayInputProps extends Omit<
-  InputProps,
-  "disabled" | "readOnly"
-> {
+export interface ArrayInputProps extends Omit<InputProps, "disabled" | "readOnly"> {
   className?: string;
   children: React.ReactNode;
   isFetching?: boolean;

@@ -1,19 +1,9 @@
 import * as React from "react";
 import { X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import {
-  FormControl,
-  FormError,
-  FormField,
-  FormLabel,
-} from "@/components/admin/form";
+import { FormControl, FormError, FormField, FormLabel } from "@/components/admin/form";
 import type { InputProps } from "ra-core";
-import {
-  useInput,
-  useResourceContext,
-  FieldTitle,
-  useTranslate,
-} from "ra-core";
+import { useInput, useResourceContext, FieldTitle, useTranslate } from "ra-core";
 import { InputHelperText } from "./input-helper-text";
 
 export type TextArrayInputProps = InputProps & {
@@ -98,12 +88,7 @@ export const TextArrayInput = (props: TextArrayInputProps) => {
       if (inputValue.trim()) {
         handleAddValue(inputValue);
       }
-    } else if (
-      e.key === "Backspace" &&
-      inputValue === "" &&
-      values.length > 0 &&
-      !readOnly
-    ) {
+    } else if (e.key === "Backspace" && inputValue === "" && values.length > 0 && !readOnly) {
       field.onChange(values.slice(0, -1));
     } else if (e.key === "Escape") {
       inputRef.current?.blur();
@@ -114,12 +99,7 @@ export const TextArrayInput = (props: TextArrayInputProps) => {
     <FormField id={id} className={className} name={field.name}>
       {label !== false && (
         <FormLabel>
-          <FieldTitle
-            label={label}
-            source={source}
-            resource={resource}
-            isRequired={isRequired}
-          />
+          <FieldTitle label={label} source={source} resource={resource} isRequired={isRequired} />
         </FormLabel>
       )}
       <FormControl>
@@ -148,9 +128,7 @@ export const TextArrayInput = (props: TextArrayInputProps) => {
                   }}
                   disabled={disabled || readOnly}
                 >
-                  <span className="sr-only">
-                    {translate("ra.action.remove", { _: "Remove" })}
-                  </span>
+                  <span className="sr-only">{translate("ra.action.remove", { _: "Remove" })}</span>
                   <X className="h-3 w-3" />
                 </button>
               </Badge>

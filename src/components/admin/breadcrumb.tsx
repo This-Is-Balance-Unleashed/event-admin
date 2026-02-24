@@ -114,9 +114,7 @@ export const Breadcrumb = ({ children, ref }: BreadcrumbProps) => {
                 child && (
                   <React.Fragment key={index}>
                     {child}
-                    {index < React.Children.count(children) - 1 ? (
-                      <BreadcrumbSeparator />
-                    ) : null}
+                    {index < React.Children.count(children) - 1 ? <BreadcrumbSeparator /> : null}
                   </React.Fragment>
                 ),
             )
