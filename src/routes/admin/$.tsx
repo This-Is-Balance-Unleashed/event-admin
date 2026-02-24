@@ -10,6 +10,7 @@ import { CouponList } from "@/components/admin/coupon-list";
 import { CouponCreate } from "@/components/admin/coupon-create";
 import { CouponEdit } from "@/components/admin/coupon-edit";
 import { CheckInPage } from "@/components/admin/check-in-page";
+import { PaymentsPage } from "@/components/admin/payments-page";
 
 export const Route = createFileRoute("/admin/$")({
   component: AdminApp,
@@ -43,6 +44,7 @@ function AdminApp() {
       />
       <CustomRoutes>
         <RouterRoute path="/checkin" element={<CheckInPage />} />
+        <RouterRoute path="/payments" element={<PaymentsPage />} />
       </CustomRoutes>
     </Admin>
   );
