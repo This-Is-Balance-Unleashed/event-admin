@@ -1,0 +1,23 @@
+pre-commit:
+  parallel: true
+  commands:
+    lint:
+      glob: "*.{js,ts,jsx,tsx}"
+      run: bun run lint:fix {staged_files}
+      stage_fixed: true
+    format:
+      glob: "*.{js,ts,jsx,tsx,json,md}"
+      run: bun run fmt {staged_files}
+      stage_fixed: true
+
+pre-push:
+  parallel: false
+  commands:
+    lint-check:
+      run: bun run lint
+    format-check:
+      run: bun run fmt:check
+    type-check:
+      run: bun run build --mode development
+    test:
+      run: bun run test
