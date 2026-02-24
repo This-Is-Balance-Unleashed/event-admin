@@ -2,7 +2,7 @@ import React from "react";
 import { buttonVariants } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { Translate, useCreatePath, useResourceContext } from "ra-core";
-import { Link } from "react-router";
+import { Link } from "@/lib/router";
 
 export type CreateButtonProps = {
   label?: string;

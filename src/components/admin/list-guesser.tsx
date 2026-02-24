@@ -9,7 +9,7 @@ import {
   usePrevious,
   useResourceContext,
 } from "ra-core";
-import { useLocation } from "react-router";
+import { useLocation } from "@/lib/router";
 import type { ListProps, ListViewProps } from "@/components/admin/list";
 import { ListView } from "@/components/admin/list";
 import { capitalize, singularize } from "inflection";

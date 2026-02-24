@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router";
+import { Link } from "@/lib/router";
 import { buttonVariants } from "@/components/ui/button";
 import { Eye } from "lucide-react";
 import {

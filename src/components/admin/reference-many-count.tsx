@@ -4,7 +4,7 @@ import {
   useRecordContext,
   useReferenceManyFieldController,
 } from "ra-core";
-import { Link } from "react-router";
+import { Link } from "@/lib/router";
 
 /**
  * Displays the count of related records that reference the current record.

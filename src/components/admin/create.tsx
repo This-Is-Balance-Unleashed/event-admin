@@ -14,7 +14,7 @@ import {
   useResourceContext,
 } from "ra-core";
 import type { ReactNode } from "react";
-import { Link } from "react-router";
+import { Link } from "@/lib/router";
 import { cn } from "@/lib/utils";
 
 export type CreateProps = CreateViewProps & CreateBaseProps;

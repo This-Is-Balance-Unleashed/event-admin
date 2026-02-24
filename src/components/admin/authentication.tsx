@@ -1,4 +1,4 @@
-import { Link } from "react-router";
+import { Link } from "@/lib/router";
 import { Translate, useHandleAuthCallback, useTranslate } from "ra-core";
 import { CircleAlert, LockIcon } from "lucide-react";
 import { cn } from "@/lib/utils";

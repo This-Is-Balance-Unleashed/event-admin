@@ -16,7 +16,7 @@ import {
   useResourceDefinition,
 } from "ra-core";
 import type { ReactNode } from "react";
-import { Link } from "react-router";
+import { Link } from "@/lib/router";
 import { cn } from "@/lib/utils";
 import { EditButton } from "@/components/admin/edit-button";
 

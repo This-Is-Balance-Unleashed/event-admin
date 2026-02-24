@@ -7,7 +7,7 @@ import {
 } from "ra-core";
 import { CircleX, LoaderCircle } from "lucide-react";
 
-import { Link } from "react-router";
+import { Link } from "@/lib/router";
 
 /**
  * Fetches and displays the item count for a resource.

@@ -1,6 +1,6 @@
 import { CircleX } from "lucide-react";
 import { Translate } from "ra-core";
-import { useNavigate } from "react-router";
+import { useNavigate } from "@/lib/router";
 
 import { Button } from "../ui/button";
 
