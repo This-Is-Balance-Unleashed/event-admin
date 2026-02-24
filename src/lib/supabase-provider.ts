@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
-import { supabaseDataProvider } from 'ra-supabase'
+import { supabaseDataProvider } from 'ra-supabase-core'
 
 const instanceUrl = import.meta.env.VITE_SUPABASE_URL as string
 const apiKey = import.meta.env.VITE_SUPABASE_SERVICE_ROLE_KEY as string
