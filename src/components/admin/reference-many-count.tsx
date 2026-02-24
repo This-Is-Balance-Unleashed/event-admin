@@ -63,7 +63,7 @@ export const ReferenceManyCount = <RecordType extends RaRecord = RaRecord>(
       to={{
         pathname: createPath({ resource: reference, type: "list" }),
         search: `filter=${JSON.stringify({
-          ...(filter || {}),
+          ...filter,
           [target]: record[source],
         })}`,
       }}

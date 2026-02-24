@@ -1,0 +1,12 @@
+{
+  "$schema": "https://cdn.jsdelivr.net/npm/oxlint@latest/configuration_schema.json",
+  "plugins": ["typescript", "react", "jsx-a11y", "import", "jsdoc", "node", "unicorn", "eslint", "oxc", "react-perf"],
+  "rules": {},
+  "ignorePatterns": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/.tanstack/**",
+    "**/public/**",
+    "**/.netlify/**"
+  ]
+}

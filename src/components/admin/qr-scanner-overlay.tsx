@@ -54,7 +54,9 @@ export function QrScannerOverlay({ onScan, onClose }: QrScannerOverlayProps) {
 
         {/* Camera feed */}
         <div className="relative overflow-hidden rounded-xl border-2 border-white/30 bg-black aspect-square">
-          <video ref={videoRef} className="w-full h-full object-cover" />
+          <video ref={videoRef} className="w-full h-full object-cover">
+            <track kind="captions" />
+          </video>
           {/* Corner guides */}
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
             <div className="size-48 relative">

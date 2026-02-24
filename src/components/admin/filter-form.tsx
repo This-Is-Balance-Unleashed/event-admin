@@ -353,7 +353,6 @@ export const FilterButton = (props: FilterButtonProps) => {
                 resource={resource}
                 onShow={handleShow}
                 onHide={handleRemove}
-                autoFocus={index === 0}
               />
             ))}
           {(hasFilterValues || validSavedQueries.length > 0) && (
@@ -472,6 +471,18 @@ export const FilterButtonMenuItem = React.forwardRef<
     });
   }, [filter.props.source, onHide]);
 
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLDivElement>) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        if (!filter.props.disabled) {
+          displayed ? handleHide() : handleShow();
+        }
+      }
+    },
+    [filter.props.disabled, displayed, handleHide, handleShow],
+  );
+
   return (
     <div
       className={cn(
@@ -483,9 +494,11 @@ export const FilterButtonMenuItem = React.forwardRef<
       onClick={
         filter.props.disabled ? undefined : displayed ? handleHide : handleShow
       }
+      onKeyDown={handleKeyDown}
       ref={ref}
       role="menuitemcheckbox"
       aria-checked={displayed}
+      tabIndex={0}
     >
       <div className="flex items-center justify-center w-4 h-4 mr-2">
         {displayed && <Check className="h-3 w-3" />}

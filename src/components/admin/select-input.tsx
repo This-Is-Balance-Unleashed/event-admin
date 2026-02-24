@@ -237,7 +237,7 @@ export const SelectInput = (props: SelectInputProps) => {
   }
 
   // Handle reset functionality
-  const handleReset = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleReset = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     field.onChange(emptyValue);
   };
@@ -277,13 +277,14 @@ export const SelectInput = (props: SelectInputProps) => {
               <SelectValue placeholder={renderEmptyItemOption()} />
 
               {field.value && field.value !== emptyValue ? (
-                <div
-                  role="button"
+                <button
+                  type="button"
                   className="p-0 ml-auto pointer-events-auto hover:bg-transparent text-muted-foreground opacity-50 hover:opacity-100"
                   onClick={handleReset}
+                  aria-label="Clear selection"
                 >
                   <X className="h-4 w-4" />
-                </div>
+                </button>
               ) : null}
             </SelectTrigger>
             <SelectContent>

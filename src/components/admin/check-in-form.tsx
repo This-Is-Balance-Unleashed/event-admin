@@ -110,10 +110,10 @@ export function CheckInForm() {
     setResults(data as Ticket[])
   }, [])
 
-  const debouncedSearch = useCallback(
-    debounce((q: string) => search(q), 300),
-    [search]
-  )
+  const debouncedSearch = useCallback((q: string) => {
+    const timer = setTimeout(() => search(q), 300)
+    return () => clearTimeout(timer)
+  }, [search])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setQuery(e.target.value)
@@ -163,7 +163,6 @@ export function CheckInForm() {
             value={query}
             onChange={handleChange}
             onKeyDown={handleKeyDown}
-            autoFocus
           />
         </div>
         <ScanQrButton onClick={() => setScannerOpen(true)} />

@@ -220,6 +220,7 @@ export const AutocompleteInput = (
                 variant="outline"
                 role="combobox"
                 aria-expanded={open}
+                aria-controls="autocomplete-list"
                 className="w-full justify-between h-auto py-1.75 font-normal"
               >
                 {selectedChoice ? (
@@ -232,7 +233,7 @@ export const AutocompleteInput = (
             </PopoverTrigger>
             <PopoverContent className="w-full max-w-(--radix-popover-trigger-width) p-0">
               {/* We handle the filtering ourselves */}
-              <Command shouldFilter={!isFromReference}>
+              <Command id="autocomplete-list" shouldFilter={!isFromReference}>
                 <CommandInput
                   placeholder="Search..."
                   value={filterValue}

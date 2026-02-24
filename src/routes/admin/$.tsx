@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { CustomRoutes, Resource } from 'ra-core'
 import { tanStackRouterProvider } from 'ra-router-tanstack'
-import { Ticket, Tag, ScanLine } from 'lucide-react'
+import { Ticket, Tag } from 'lucide-react'
 import { Admin } from '@/components/admin/admin'
 import { dataProvider } from '@/lib/supabase-provider'
 import { TicketList } from '@/components/admin/ticket-list'
