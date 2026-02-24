@@ -56,7 +56,7 @@ export function AppSidebar() {
             >
               <Link to="/">
                 <Shell className="!size-5" />
-                <span className="text-base font-semibold">Acme Inc.</span>
+                <span className="text-base font-semibold">Hit Refresh</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
