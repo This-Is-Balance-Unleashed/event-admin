@@ -10,6 +10,5 @@ export type {
 export { fetchPaystackTransactionsHandler } from "./paystack-handler";
 
 export const fetchPaystackTransactions = createServerFn()
-  // @ts-expect-error
-  .validator((input: { page: number; perPage: number }) => input)
+  .inputValidator((input: { page: number; perPage: number }) => input)
   .handler(fetchPaystackTransactionsHandler);

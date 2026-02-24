@@ -1,15 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { fetchPaystackTransactionsHandler } from "./paystack-handler";
-
-type PaystackTransaction = {
-  id: number;
-  reference: string;
-  amount: number;
-  status: string;
-  channel: string;
-  paid_at: string;
-  customer: { email: string };
-};
+import type { PaystackTransaction } from "./paystack-handler";
 
 describe("fetchPaystackTransactions handler", () => {
   beforeEach(() => {

@@ -48,5 +48,9 @@ export async function fetchPaystackTransactionsHandler({
     throw new Error(`Paystack API error: ${res.status}`);
   }
 
-  return res.json() as Promise<PaystackResponse>;
+  const body = (await res.json()) as PaystackResponse;
+  if (!body.status) {
+    throw new Error("Paystack API returned status false");
+  }
+  return body;
 }
