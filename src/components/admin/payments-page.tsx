@@ -16,11 +16,13 @@ import { fetchPaystackTransactions, type PaystackTransaction } from "@/lib/payst
 
 const PER_PAGE = 50;
 
-function statusVariant(status: string): "default" | "destructive" | "secondary" | "outline" {
-  if (status === "success") return "default";
-  if (status === "failed") return "destructive";
-  return "secondary";
-}
+type TxStatus = PaystackTransaction["status"];
+
+const STATUS_VARIANT: Record<TxStatus, "default" | "destructive" | "secondary" | "outline"> = {
+  success: "default",
+  failed: "destructive",
+  abandoned: "outline",
+};
 
 function formatAmount(kobo: number) {
   return `₦${(kobo / 100).toLocaleString("en-NG")}`;
@@ -43,7 +45,7 @@ function TransactionRow({ tx }: { tx: PaystackTransaction }) {
       <TableCell className="font-mono text-xs">{tx.reference}</TableCell>
       <TableCell>{formatAmount(tx.amount)}</TableCell>
       <TableCell>
-        <Badge variant={statusVariant(tx.status)} className="capitalize">
+        <Badge variant={STATUS_VARIANT[tx.status]} className="capitalize">
           {tx.status}
         </Badge>
       </TableCell>
@@ -77,6 +79,7 @@ export function PaymentsPage() {
     queryKey: ["paystack-transactions", page, PER_PAGE],
     queryFn: () => fetchPaystackTransactions({ data: { page, perPage: PER_PAGE } }),
     staleTime: 60_000,
+    placeholderData: (previousData) => previousData,
   });
 
   const meta = data?.meta;
