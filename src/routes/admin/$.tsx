@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { Resource } from 'ra-core'
+import { CustomRoutes, Resource } from 'ra-core'
 import { tanStackRouterProvider } from 'ra-router-tanstack'
 import { Ticket, Tag, ScanLine } from 'lucide-react'
 import { Admin } from '@/components/admin/admin'
@@ -15,7 +15,7 @@ export const Route = createFileRoute('/admin/$')({
   component: AdminApp,
 })
 
-const { Route: CustomRoute } = tanStackRouterProvider
+const { Route: RouterRoute } = tanStackRouterProvider
 
 function AdminApp() {
   return (
@@ -41,11 +41,9 @@ function AdminApp() {
         icon={Tag}
         recordRepresentation="code"
       />
-      <CustomRoute
-        noLayout={false}
-        path="/checkin"
-        element={<CheckInPage />}
-      />
+      <CustomRoutes>
+        <RouterRoute path="/checkin" element={<CheckInPage />} />
+      </CustomRoutes>
     </Admin>
   )
 }
