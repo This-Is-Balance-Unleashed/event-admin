@@ -2,11 +2,11 @@ import { useState, useCallback } from 'react'
 import { supabaseClient } from '@/lib/supabase-provider'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import { ScanLine, CheckCircle2, AlertCircle, Clock, XCircle, Search } from 'lucide-react'
 import { TicketStatusBadge } from '@/components/admin/ticket-status-badge'
+import { QrScannerOverlay, ScanQrButton } from '@/components/admin/qr-scanner-overlay'
 
 type Ticket = {
   id: string
@@ -87,6 +87,7 @@ export function CheckInForm() {
   const [checkingIn, setCheckingIn] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [scannerOpen, setScannerOpen] = useState(false)
 
   const search = useCallback(async (q: string) => {
     if (!q.trim() || q.trim().length < 2) {
@@ -123,6 +124,12 @@ export function CheckInForm() {
     if (e.key === 'Enter') search(query)
   }
 
+  const handleQrScan = useCallback((value: string) => {
+    setScannerOpen(false)
+    setQuery(value)
+    search(value)
+  }, [search])
+
   const handleCheckIn = async (id: string) => {
     setCheckingIn(id)
     setError(null)
@@ -141,16 +148,25 @@ export function CheckInForm() {
 
   return (
     <div className="space-y-4 max-w-lg mx-auto">
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-        <Input
-          className="pl-9 h-12 text-base"
-          placeholder="Search by name, email or QR code…"
-          value={query}
-          onChange={handleChange}
-          onKeyDown={handleKeyDown}
-          autoFocus
+      {scannerOpen && (
+        <QrScannerOverlay
+          onScan={handleQrScan}
+          onClose={() => setScannerOpen(false)}
         />
+      )}
+      <div className="flex gap-2">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+          <Input
+            className="pl-9 h-12 text-base"
+            placeholder="Search by name, email or QR code…"
+            value={query}
+            onChange={handleChange}
+            onKeyDown={handleKeyDown}
+            autoFocus
+          />
+        </div>
+        <ScanQrButton onClick={() => setScannerOpen(true)} />
       </div>
 
       {searching && (
