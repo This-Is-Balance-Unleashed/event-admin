@@ -2,13 +2,14 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 
 export interface AdminUser {
   id: string;
-  email: string | undefined;
-  last_sign_in_at: string | undefined;
+  email?: string;
+  last_sign_in_at?: string;
   created_at: string;
 }
 
 export async function listAdminUsersHandler(client: SupabaseClient): Promise<AdminUser[]> {
   const { data, error } = await client.auth.admin.listUsers();
+  // Throw the full AuthError — it carries .status and .code beyond .message
   if (error) throw error;
   return data.users.map((u) => ({
     id: u.id,
@@ -23,5 +24,6 @@ export async function inviteAdminUserHandler(
   email: string,
 ): Promise<void> {
   const { error } = await client.auth.admin.inviteUserByEmail(email);
+  // Throw the full AuthError — it carries .status and .code beyond .message
   if (error) throw error;
 }

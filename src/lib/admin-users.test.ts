@@ -15,7 +15,7 @@ const mockClient = {
 } as unknown as SupabaseClient;
 
 beforeEach(() => {
-  vi.clearAllMocks();
+  vi.resetAllMocks();
 });
 
 describe("listAdminUsersHandler", () => {
@@ -47,11 +47,20 @@ describe("listAdminUsersHandler", () => {
 
   it("throws on Supabase error", async () => {
     mockListUsers.mockResolvedValueOnce({
-      data: null,
+      data: { users: [] },
       error: new Error("Auth admin error"),
     });
 
     await expect(listAdminUsersHandler(mockClient)).rejects.toThrow("Auth admin error");
+  });
+
+  it("returns an empty array when no users exist", async () => {
+    mockListUsers.mockResolvedValueOnce({
+      data: { users: [] },
+      error: null,
+    });
+    const result = await listAdminUsersHandler(mockClient);
+    expect(result).toEqual([]);
   });
 });
 
@@ -59,8 +68,7 @@ describe("inviteAdminUserHandler", () => {
   it("calls inviteUserByEmail with correct email", async () => {
     mockInviteUser.mockResolvedValueOnce({ error: null });
 
-    await inviteAdminUserHandler(mockClient, "new@test.com");
-
+    await expect(inviteAdminUserHandler(mockClient, "new@test.com")).resolves.toBeUndefined();
     expect(mockInviteUser).toHaveBeenCalledWith("new@test.com");
   });
 
