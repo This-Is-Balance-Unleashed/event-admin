@@ -110,8 +110,8 @@ export function AdminsPage() {
           </TableHeader>
           <TableBody>
             {isLoading
-              ? Array.from({ length: 3 }).map((_, i) => (
-                  <TableRow key={i}>
+              ? Array.from({ length: 3 }, (_, i) => (
+                  <TableRow key={`skeleton-${i}`}>
                     <TableCell>
                       <Skeleton className="h-4 w-48" />
                     </TableCell>
