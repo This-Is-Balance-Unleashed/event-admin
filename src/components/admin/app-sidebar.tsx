@@ -10,7 +10,7 @@ import {
 import { tanStackRouterProvider } from "ra-router-tanstack";
 
 const { Link, useMatch } = tanStackRouterProvider;
-import { CreditCard, ScanLine, ShieldCheck } from "lucide-react";
+import { CreditCard, RefreshCw, ScanLine, ShieldCheck } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -52,9 +52,9 @@ export function AppSidebar() {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:!p-1.5">
+            <SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:p-1.5!">
               <Link to="/">
-                <Shell className="!size-5" />
+                <Shell className="size-5!" />
                 <span className="text-base font-semibold">Hit Refresh</span>
               </Link>
             </SidebarMenuButton>
@@ -74,6 +74,7 @@ export function AppSidebar() {
               <CheckInMenuItem onClick={handleClick} />
               <PaymentsMenuItem onClick={handleClick} />
               <AdminsMenuItem onClick={handleClick} />
+              <ReconciliationMenuItem onClick={handleClick} />
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -156,6 +157,20 @@ export const AdminsMenuItem = ({ onClick }: { onClick?: () => void }) => {
         <Link to="/admin/admins" onClick={onClick}>
           <ShieldCheck />
           Admins
+        </Link>
+      </SidebarMenuButton>
+    </SidebarMenuItem>
+  );
+};
+
+export const ReconciliationMenuItem = ({ onClick }: { onClick?: () => void }) => {
+  const match = useMatch({ path: "/admin/reconciliation", end: false });
+  return (
+    <SidebarMenuItem>
+      <SidebarMenuButton asChild isActive={!!match}>
+        <Link to="/admin/reconciliation" onClick={onClick}>
+          <RefreshCw />
+          Reconciliation
         </Link>
       </SidebarMenuButton>
     </SidebarMenuItem>
