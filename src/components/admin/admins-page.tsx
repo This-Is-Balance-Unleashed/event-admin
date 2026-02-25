@@ -95,7 +95,7 @@ export function AdminsPage() {
 
       {error && (
         <div className="text-sm text-destructive border border-destructive/30 rounded p-3">
-          Failed to load admins: {(error as Error).message}
+          Failed to load admins: {error instanceof Error ? error.message : "Unknown error"}
         </div>
       )}
 
@@ -123,6 +123,14 @@ export function AdminsPage() {
                     </TableCell>
                   </TableRow>
                 ))
+              : users.length === 0
+                ? (
+                  <TableRow>
+                    <TableCell colSpan={3} className="text-center text-muted-foreground py-12">
+                      No admins found
+                    </TableCell>
+                  </TableRow>
+                )
               : users.map((user: AdminUser) => (
                   <TableRow key={user.id}>
                     <TableCell className="font-medium">{user.email ?? "—"}</TableCell>
