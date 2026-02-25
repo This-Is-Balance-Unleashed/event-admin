@@ -8,6 +8,8 @@ vi.mock("qrcode", () => ({
   },
 }));
 
+import QRCode from "qrcode";
+
 import {
   parseReference,
   getReconciliationDataHandler,
@@ -83,6 +85,8 @@ describe("getReconciliationDataHandler", () => {
   }
 
   beforeEach(() => {
+    vi.resetAllMocks();
+    vi.mocked(QRCode.toBuffer).mockResolvedValue(Buffer.from("fake-qr-png"));
     vi.stubGlobal("fetch", vi.fn());
     process.env.PAYSTACK_SECRET_KEY = "sk_test_abc";
   });
@@ -124,6 +128,11 @@ describe("getReconciliationDataHandler", () => {
 // ─── resolveTicketsHandler ─────────────────────────────────────────────────
 
 describe("resolveTicketsHandler", () => {
+  beforeEach(() => {
+    vi.resetAllMocks();
+    vi.mocked(QRCode.toBuffer).mockResolvedValue(Buffer.from("fake-qr-png"));
+  });
+
   const TICKET = {
     id: "ticket-uuid-1",
     email: "test@example.com",
@@ -170,7 +179,6 @@ describe("resolveTicketsHandler", () => {
     expect(result.errors).toHaveLength(0);
 
     // Verify QRCode was called with correct ticket_secret format
-    const QRCode = (await import("qrcode")).default;
     expect(QRCode.toBuffer).toHaveBeenCalledWith(
       "1771972002656_gbs248::event-uuid::ticket-1",
       expect.objectContaining({ errorCorrectionLevel: "H", type: "png", width: 400 }),

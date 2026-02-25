@@ -63,7 +63,8 @@ export async function getReconciliationDataHandler(
       { headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" } },
     );
     if (!res.ok) throw new Error(`Paystack API error: ${res.status}`);
-    const body = await res.json();
+    const body = (await res.json()) as { status: boolean; data: Array<{ reference: string; amount: number; channel: string; paid_at: string }>; meta: { page: number; pageCount: number } };
+    if (!body.status) throw new Error("Paystack API returned status false");
     for (const tx of body.data) {
       successRefs.set(tx.reference, {
         amount: tx.amount,
@@ -118,6 +119,8 @@ export async function resolveTicketsHandler(
   client: SupabaseClient,
   ticketIds: string[],
 ): Promise<ResolveResult> {
+  if (ticketIds.length === 0) return { resolved: 0, errors: [] };
+
   // 1. Fetch ticket details for given IDs
   const { data: tickets, error } = await client
     .from("tickets")
@@ -188,10 +191,11 @@ export async function resolveTicketsHandler(
 
       // Update group booking status if applicable
       if (ticket.group_booking_id) {
-        await client
+        const { error: groupUpdateError } = await client
           .from("group_bookings")
           .update({ status: "paid" })
           .eq("id", ticket.group_booking_id);
+        if (groupUpdateError) throw groupUpdateError;
       }
 
       resolved++;
