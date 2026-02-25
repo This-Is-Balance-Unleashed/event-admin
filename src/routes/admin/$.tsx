@@ -4,6 +4,7 @@ import { tanStackRouterProvider } from "ra-router-tanstack";
 import { Ticket, Tag, Calendar, Tags, Users, UsersRound } from "lucide-react";
 import { Admin } from "@/components/admin/admin";
 import { dataProvider } from "@/lib/supabase-provider";
+import { authProvider } from "@/lib/auth-provider";
 import { TicketList } from "@/components/admin/ticket-list";
 import { TicketShow } from "@/components/admin/ticket-show";
 import { CouponList } from "@/components/admin/coupon-list";
@@ -32,10 +33,12 @@ function AdminApp() {
   return (
     <Admin
       dataProvider={dataProvider}
+      authProvider={authProvider}
       routerProvider={tanStackRouterProvider}
       basename="/admin"
       title="Hit Refresh Admin"
       disableTelemetry
+      requireAuth
     >
       <Resource
         name="tickets"
