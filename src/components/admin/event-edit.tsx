@@ -11,7 +11,7 @@ export function EventEdit() {
       <SimpleForm>
         <TextInput source="title" validate={required()} />
         <TextInput source="description" multiline />
-        <DateTimeInput source="event_date" />
+        <DateTimeInput source="event_date" validate={required()} />
         <TextInput source="location" />
         <NumberInput source="max_attendees" min={1} />
         <NumberInput

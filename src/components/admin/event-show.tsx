@@ -25,7 +25,7 @@ export function EventShow() {
         <RecordField source="price_in_kobo" label="Base Price">
           <PriceField />
         </RecordField>
-        <RecordField source="ticket_types_count" label="Ticket Types">
+        <RecordField label="Ticket Types">
           <ReferenceManyCount reference="ticket_types" target="event_id" />
         </RecordField>
         <RecordField source="created_at" label="Created">
