@@ -8,11 +8,9 @@ export type { AdminUser } from "./admin-users-handler";
 // This key is exposed in the browser bundle via VITE_ prefix — a pre-existing
 // project-wide trade-off for this internal admin tool. The auth.admin.* calls
 // here run inside createServerFn handlers (server-side only).
-export const listAdminUsers = createServerFn().handler(() =>
-  listAdminUsersHandler(supabaseClient),
-);
+export const listAdminUsers = createServerFn().handler(() => listAdminUsersHandler(supabaseClient));
 
 // Arrow wrapper is needed because the handler takes (client, email) rather than TanStack's { data } context shape
-export const inviteAdminUser = createServerFn({ method: 'POST' })
+export const inviteAdminUser = createServerFn({ method: "POST" })
   .inputValidator((input: { email: string }) => input)
   .handler(({ data }) => inviteAdminUserHandler(supabaseClient, data.email));

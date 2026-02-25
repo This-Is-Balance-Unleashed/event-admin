@@ -19,10 +19,7 @@ export async function listAdminUsersHandler(client: SupabaseClient): Promise<Adm
   }));
 }
 
-export async function inviteAdminUserHandler(
-  client: SupabaseClient,
-  email: string,
-): Promise<void> {
+export async function inviteAdminUserHandler(client: SupabaseClient, email: string): Promise<void> {
   const { error } = await client.auth.admin.inviteUserByEmail(email);
   // Throw the full AuthError — it carries .status and .code beyond .message
   if (error) throw error;

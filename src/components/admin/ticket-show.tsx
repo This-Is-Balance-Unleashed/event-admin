@@ -1,7 +1,6 @@
 import { useRecordContext, useUpdate, useNotify, useRefresh } from "ra-core";
 import QRCode from "react-qr-code";
 import { Show } from "@/components/admin/show";
-import { SimpleShowLayout } from "@/components/admin/simple-show-layout";
 import { DateField } from "@/components/admin/date-field";
 import { EmailField } from "@/components/admin/email-field";
 import { RecordField } from "@/components/admin/record-field";
@@ -91,7 +90,7 @@ function TicketQRCode() {
 export function TicketShow() {
   return (
     <Show>
-      <SimpleShowLayout>
+      <div className="flex flex-col gap-4">
         <RecordField source="name" />
         <RecordField source="email" label="Email">
           <EmailField source="email" />
@@ -120,7 +119,7 @@ export function TicketShow() {
         <div className="pt-4">
           <CheckInButton />
         </div>
-      </SimpleShowLayout>
+      </div>
     </Show>
   );
 }

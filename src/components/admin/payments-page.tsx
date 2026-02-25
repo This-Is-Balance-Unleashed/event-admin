@@ -86,7 +86,7 @@ export function PaymentsPage() {
   const transactions = data?.data ?? [];
 
   return (
-    <div className="flex flex-col gap-6 p-6 max-w-6xl mx-auto w-full">
+    <div className="flex flex-col gap-6 p-6 w-full">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="bg-primary/10 rounded-full p-3">
@@ -107,8 +107,7 @@ export function PaymentsPage() {
         <div className="flex items-center gap-2 text-red-600 text-sm bg-red-50 rounded-lg p-4 border border-red-200">
           <AlertCircle className="size-4 shrink-0" />
           <span>
-            Failed to load payments:{" "}
-            {error instanceof Error ? error.message : "Unknown error"}
+            Failed to load payments: {error instanceof Error ? error.message : "Unknown error"}
           </span>
         </div>
       )}

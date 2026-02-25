@@ -36,7 +36,7 @@ const AdminContext = (props: CoreAdminContextProps) => <CoreAdminContext {...pro
  * @internal
  */
 const AdminUI = (props: CoreAdminUIProps) => {
-  const { disableTelemetry = false, ...rest } = props;
+  const { disableTelemetry = true, ...rest } = props;
 
   useEffect(() => {
     if (

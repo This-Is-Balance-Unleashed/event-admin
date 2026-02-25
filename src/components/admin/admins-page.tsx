@@ -22,15 +22,18 @@ export function AdminsPage() {
   const notify = useNotify();
   const queryClient = useQueryClient();
 
-  const { data: users = [], isLoading, error } = useQuery({
+  const {
+    data: users = [],
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ["admin-users"],
     queryFn: () => listAdminUsers(),
     staleTime: 60_000,
   });
 
   const { mutate: invite, isPending } = useMutation({
-    mutationFn: (emailToInvite: string) =>
-      inviteAdminUser({ data: { email: emailToInvite } }),
+    mutationFn: (emailToInvite: string) => inviteAdminUser({ data: { email: emailToInvite } }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-users"] });
       notify("Invitation sent successfully", { type: "success" });
@@ -64,10 +67,7 @@ export function AdminsPage() {
       </div>
 
       {showInvite && (
-        <form
-          onSubmit={handleSubmit}
-          className="flex items-center gap-2 p-4 border rounded-lg"
-        >
+        <form onSubmit={handleSubmit} className="flex items-center gap-2 p-4 border rounded-lg">
           <Input
             type="email"
             placeholder="admin@example.com"
@@ -109,39 +109,39 @@ export function AdminsPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {isLoading
-              ? Array.from({ length: 3 }, (_, i) => (
-                  <TableRow key={`skeleton-${i}`}>
-                    <TableCell>
-                      <Skeleton className="h-4 w-48" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton className="h-4 w-32" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton className="h-4 w-32" />
-                    </TableCell>
-                  </TableRow>
-                ))
-              : users.length === 0
-                ? (
-                  <TableRow>
-                    <TableCell colSpan={3} className="text-center text-muted-foreground py-12">
-                      No admins found
-                    </TableCell>
-                  </TableRow>
-                )
-              : users.map((user: AdminUser) => (
-                  <TableRow key={user.id}>
-                    <TableCell className="font-medium">{user.email ?? "—"}</TableCell>
-                    <TableCell>
-                      {user.last_sign_in_at
-                        ? new Date(user.last_sign_in_at).toLocaleString()
-                        : "Never"}
-                    </TableCell>
-                    <TableCell>{new Date(user.created_at).toLocaleString()}</TableCell>
-                  </TableRow>
-                ))}
+            {isLoading ? (
+              Array.from({ length: 3 }, (_, i) => (
+                <TableRow key={`skeleton-${i}`}>
+                  <TableCell>
+                    <Skeleton className="h-4 w-48" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-32" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-32" />
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : users.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={3} className="text-center text-muted-foreground py-12">
+                  No admins found
+                </TableCell>
+              </TableRow>
+            ) : (
+              users.map((user: AdminUser) => (
+                <TableRow key={user.id}>
+                  <TableCell className="font-medium">{user.email ?? "—"}</TableCell>
+                  <TableCell>
+                    {user.last_sign_in_at
+                      ? new Date(user.last_sign_in_at).toLocaleString()
+                      : "Never"}
+                  </TableCell>
+                  <TableCell>{new Date(user.created_at).toLocaleString()}</TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
       </div>

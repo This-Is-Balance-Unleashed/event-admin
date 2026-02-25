@@ -70,18 +70,14 @@ export const LoginPage = (props: { redirectTo?: string }) => {
             Hit Refresh Admin
           </div>
           <div className="relative z-20 mt-auto">
-            <p className="text-sm text-zinc-400">
-              Hit Refresh Conference — Feb 28, 2026, Lagos
-            </p>
+            <p className="text-sm text-zinc-400">Hit Refresh Conference — Feb 28, 2026, Lagos</p>
           </div>
         </div>
         <div className="lg:p-8">
           <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
             <div className="flex flex-col space-y-2 text-center">
               <h1 className="text-2xl font-semibold tracking-tight">Sign in</h1>
-              <p className="text-sm leading-none text-muted-foreground">
-                Admin access only
-              </p>
+              <p className="text-sm leading-none text-muted-foreground">Admin access only</p>
             </div>
             <Form className="space-y-8" onSubmit={handleSubmit}>
               <TextInput label="Email" source="email" type="email" validate={required()} />

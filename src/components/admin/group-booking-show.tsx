@@ -101,11 +101,7 @@ export function GroupBookingShow() {
 
         {/* Embedded group members sub-table */}
         <RecordField label="Members">
-          <ReferenceManyField
-            reference="group_members"
-            target="group_booking_id"
-            label="Members"
-          >
+          <ReferenceManyField reference="group_members" target="group_booking_id" label="Members">
             <DataTable>
               <DataTable.Col source="member_position" label="#" />
               <DataTable.Col source="name" />
