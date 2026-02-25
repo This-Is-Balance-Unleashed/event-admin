@@ -14,15 +14,19 @@ Add 4 new resources to the Hit Refresh admin panel. All get list + show + edit. 
 ## Schema Reference
 
 ### events
+
 `id, organizer_id (→ auth.users), title, description, price_in_kobo, event_date, location, max_attendees, created_at, updated_at`
 
 ### ticket_types
+
 `id, event_id (→ events), name, description, price_in_kobo, max_quantity, sold_quantity, is_available, sort_order, created_at, updated_at`
 
 ### group_bookings
+
 `id, booking_reference, booking_type (corporate|group), company_name, company_logo_url, group_name, primary_contact_name, primary_contact_email, primary_contact_phone, selected_perks (JSONB), team_preferences, ticket_type_id (→ ticket_types), quantity, total_price_paid, discount_applied, paystack_reference, status (pending|paid|failed), coupon_id (→ coupons), created_at, updated_at`
 
 ### group_members
+
 `id, group_booking_id (→ group_bookings), name, email, is_primary_contact, member_position, assigned_ticket_id (→ tickets), created_at`
 
 ## Resource Designs
@@ -34,6 +38,7 @@ Add 4 new resources to the Hit Refresh admin panel. All get list + show + edit. 
 **Record representation:** `title`
 
 **Files to create:**
+
 - `src/components/admin/event-list.tsx`
 - `src/components/admin/event-show.tsx`
 - `src/components/admin/event-edit.tsx`
@@ -43,6 +48,7 @@ Add 4 new resources to the Hit Refresh admin panel. All get list + show + edit. 
 **Show fields:** All columns + ticket types count via `ReferenceManyCount` on `ticket_types`
 
 **Edit fields:** title, description, event_date, location, max_attendees, price_in_kobo
+
 - `price_in_kobo` displayed/entered as ₦ (divide/multiply by 100 for display)
 - `organizer_id`, `created_at`, `updated_at` are read-only — not in edit form
 
@@ -55,6 +61,7 @@ Add 4 new resources to the Hit Refresh admin panel. All get list + show + edit. 
 **Record representation:** `name`
 
 **Files to create:**
+
 - `src/components/admin/ticket-type-list.tsx`
 - `src/components/admin/ticket-type-show.tsx`
 - `src/components/admin/ticket-type-edit.tsx`
@@ -64,6 +71,7 @@ Add 4 new resources to the Hit Refresh admin panel. All get list + show + edit. 
 **Show fields:** All columns + event reference link
 
 **Edit fields:** is_available (BooleanInput toggle), price_in_kobo (NumberInput), max_quantity (NumberInput)
+
 - `name`, `sold_quantity`, `sort_order`, `event_id` are NOT in the edit form (operational integrity)
 
 ---
@@ -75,6 +83,7 @@ Add 4 new resources to the Hit Refresh admin panel. All get list + show + edit. 
 **Record representation:** `booking_reference`
 
 **Files to create:**
+
 - `src/components/admin/group-booking-list.tsx`
 - `src/components/admin/group-booking-show.tsx`
 - `src/components/admin/group-booking-edit.tsx`
@@ -97,6 +106,7 @@ Columns: Position | Name | Email | Primary Contact (badge) | Assigned Ticket (Re
 **Record representation:** `name`
 
 **Files to create:**
+
 - `src/components/admin/group-member-edit.tsx`
 
 **Edit fields:** name, email (position and group_booking_id not editable)
@@ -105,19 +115,19 @@ Columns: Position | Name | Email | Primary Contact (badge) | Assigned Ticket (Re
 
 ## Files to Create / Modify
 
-| File | Action |
-|------|--------|
-| `src/components/admin/event-list.tsx` | Create |
-| `src/components/admin/event-show.tsx` | Create |
-| `src/components/admin/event-edit.tsx` | Create |
-| `src/components/admin/ticket-type-list.tsx` | Create |
-| `src/components/admin/ticket-type-show.tsx` | Create |
-| `src/components/admin/ticket-type-edit.tsx` | Create |
-| `src/components/admin/group-booking-list.tsx` | Create |
-| `src/components/admin/group-booking-show.tsx` | Create |
-| `src/components/admin/group-booking-edit.tsx` | Create |
-| `src/components/admin/group-member-edit.tsx` | Create |
-| `src/routes/admin/$.tsx` | Modify — add 4 Resource entries |
+| File                                          | Action                          |
+| --------------------------------------------- | ------------------------------- |
+| `src/components/admin/event-list.tsx`         | Create                          |
+| `src/components/admin/event-show.tsx`         | Create                          |
+| `src/components/admin/event-edit.tsx`         | Create                          |
+| `src/components/admin/ticket-type-list.tsx`   | Create                          |
+| `src/components/admin/ticket-type-show.tsx`   | Create                          |
+| `src/components/admin/ticket-type-edit.tsx`   | Create                          |
+| `src/components/admin/group-booking-list.tsx` | Create                          |
+| `src/components/admin/group-booking-show.tsx` | Create                          |
+| `src/components/admin/group-booking-edit.tsx` | Create                          |
+| `src/components/admin/group-member-edit.tsx`  | Create                          |
+| `src/routes/admin/$.tsx`                      | Modify — add 4 Resource entries |
 
 ## Out of Scope
 

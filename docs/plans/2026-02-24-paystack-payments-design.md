@@ -36,25 +36,29 @@ The page follows the same pattern as `CheckInPage` — a custom route wired insi
 ## UI Spec
 
 ### Header
+
 - Title: "Payments"
 - Subtitle: total count from Paystack meta (e.g. "1,234 transactions")
 
 ### Table Columns
-| Column | Source field | Format |
-|--------|-------------|--------|
-| Reference | `reference` | monospace text |
-| Amount | `amount` | ₦ (divided by 100, formatted) |
-| Status | `status` | badge: success (green), failed (red), abandoned (gray) |
-| Customer | `customer.email` | plain text |
-| Channel | `channel` | pill: card / bank / ussd |
-| Date | `paid_at` | date + time |
+
+| Column    | Source field     | Format                                                 |
+| --------- | ---------------- | ------------------------------------------------------ |
+| Reference | `reference`      | monospace text                                         |
+| Amount    | `amount`         | ₦ (divided by 100, formatted)                          |
+| Status    | `status`         | badge: success (green), failed (red), abandoned (gray) |
+| Customer  | `customer.email` | plain text                                             |
+| Channel   | `channel`        | pill: card / bank / ussd                               |
+| Date      | `paid_at`        | date + time                                            |
 
 ### Pagination
+
 - Previous / Next buttons
 - "Page X of Y" display derived from `meta.pageCount`
 - `perPage` fixed at 50
 
 ### Sidebar
+
 - Static `PaymentsMenuItem` added to `app-sidebar.tsx` matching `CheckInMenuItem` pattern
 - Route: `/admin/payments`
 - Icon: `CreditCard` (lucide-react)
@@ -71,13 +75,13 @@ This key is never sent to the browser — only accessed inside the `createServer
 
 ## Files to Create / Modify
 
-| File | Action |
-|------|--------|
-| `src/lib/paystack.ts` | Create — `createServerFn` wrapping Paystack API |
-| `src/components/admin/payments-page.tsx` | Create — page component |
-| `src/components/admin/app-sidebar.tsx` | Modify — add `PaymentsMenuItem` |
-| `src/routes/admin/$.tsx` | Modify — add `<RouterRoute path="/payments" ... />` |
-| `.env` | Modify — add `PAYSTACK_SECRET_KEY` |
+| File                                     | Action                                              |
+| ---------------------------------------- | --------------------------------------------------- |
+| `src/lib/paystack.ts`                    | Create — `createServerFn` wrapping Paystack API     |
+| `src/components/admin/payments-page.tsx` | Create — page component                             |
+| `src/components/admin/app-sidebar.tsx`   | Modify — add `PaymentsMenuItem`                     |
+| `src/routes/admin/$.tsx`                 | Modify — add `<RouterRoute path="/payments" ... />` |
+| `.env`                                   | Modify — add `PAYSTACK_SECRET_KEY`                  |
 
 ## Out of Scope
 

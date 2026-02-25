@@ -13,6 +13,7 @@
 ### Task 1: Create auth provider and wire into Admin
 
 **Files:**
+
 - Create: `src/lib/auth-provider.ts`
 - Modify: `src/routes/admin/$.tsx` (lines 32–38 — `<Admin>` props)
 
@@ -44,6 +45,7 @@ import { authProvider } from "@/lib/auth-provider";
 ```
 
 Change the `<Admin>` opening tag (currently line 33) from:
+
 ```tsx
 <Admin
   dataProvider={dataProvider}
@@ -53,7 +55,9 @@ Change the `<Admin>` opening tag (currently line 33) from:
   disableTelemetry
 >
 ```
+
 to:
+
 ```tsx
 <Admin
   dataProvider={dataProvider}
@@ -86,6 +90,7 @@ git commit -m "feat: wire supabase auth provider into Admin with requireAuth"
 ### Task 2: Update login page branding
 
 **Files:**
+
 - Modify: `src/components/admin/login-page.tsx` (lines 70, 74–80, 87)
 
 No test file — pure UI change.
@@ -93,46 +98,49 @@ No test file — pure UI change.
 **Step 1: Open `src/components/admin/login-page.tsx` and make these exact edits**
 
 Change line 70 from:
+
 ```tsx
             Acme Inc
 ```
+
 to:
+
 ```tsx
             Hit Refresh Admin
 ```
 
 Replace the blockquote block (lines 72–81) from:
+
 ```tsx
-          <div className="relative z-20 mt-auto">
-            <blockquote className="space-y-2">
-              <p className="text-lg">
-                &ldquo;Shadcn Admin Kit has allowed us to quickly create and evolve a powerful tool
-                that otherwise would have taken months of time and effort to develop.&rdquo;
-              </p>
-              <footer className="text-sm">John Doe</footer>
-            </blockquote>
-          </div>
+<div className="relative z-20 mt-auto">
+  <blockquote className="space-y-2">
+    <p className="text-lg">
+      &ldquo;Shadcn Admin Kit has allowed us to quickly create and evolve a powerful tool that
+      otherwise would have taken months of time and effort to develop.&rdquo;
+    </p>
+    <footer className="text-sm">John Doe</footer>
+  </blockquote>
+</div>
 ```
+
 to:
+
 ```tsx
-          <div className="relative z-20 mt-auto">
-            <p className="text-sm text-zinc-400">
-              Hit Refresh Conference — Feb 28, 2026, Lagos
-            </p>
-          </div>
+<div className="relative z-20 mt-auto">
+  <p className="text-sm text-zinc-400">Hit Refresh Conference — Feb 28, 2026, Lagos</p>
+</div>
 ```
 
 Replace line 87 (the dummy credentials hint) from:
+
 ```tsx
-              <p className="text-sm leading-none text-muted-foreground">
-                Try janedoe@acme.com / password
-              </p>
+<p className="text-sm leading-none text-muted-foreground">Try janedoe@acme.com / password</p>
 ```
+
 to:
+
 ```tsx
-              <p className="text-sm leading-none text-muted-foreground">
-                Admin access only
-              </p>
+<p className="text-sm leading-none text-muted-foreground">Admin access only</p>
 ```
 
 **Step 2: Run typecheck**
@@ -155,6 +163,7 @@ git commit -m "fix: update login page branding to Hit Refresh Admin"
 ### Task 3: Admin users handler with tests (TDD)
 
 **Files:**
+
 - Create: `src/lib/admin-users-handler.ts`
 - Create: `src/lib/admin-users.test.ts`
 
@@ -272,10 +281,7 @@ export async function listAdminUsersHandler(client: SupabaseClient): Promise<Adm
   }));
 }
 
-export async function inviteAdminUserHandler(
-  client: SupabaseClient,
-  email: string,
-): Promise<void> {
+export async function inviteAdminUserHandler(client: SupabaseClient, email: string): Promise<void> {
   const { error } = await client.auth.admin.inviteUserByEmail(email);
   if (error) throw error;
 }
@@ -301,6 +307,7 @@ git commit -m "feat: add admin users handler with tests"
 ### Task 4: Admin users server functions (thin wrapper)
 
 **Files:**
+
 - Create: `src/lib/admin-users.ts`
 
 **Step 1: Create `src/lib/admin-users.ts`**
@@ -314,9 +321,7 @@ import { listAdminUsersHandler, inviteAdminUserHandler } from "./admin-users-han
 
 export type { AdminUser } from "./admin-users-handler";
 
-export const listAdminUsers = createServerFn().handler(() =>
-  listAdminUsersHandler(supabaseClient),
-);
+export const listAdminUsers = createServerFn().handler(() => listAdminUsersHandler(supabaseClient));
 
 export const inviteAdminUser = createServerFn()
   .inputValidator((input: { email: string }) => input)
@@ -343,6 +348,7 @@ git commit -m "feat: add admin users server functions (list, invite)"
 ### Task 5: Admins page component + sidebar + route
 
 **Files:**
+
 - Create: `src/components/admin/admins-page.tsx`
 - Modify: `src/components/admin/app-sidebar.tsx`
 - Modify: `src/routes/admin/$.tsx`
@@ -374,15 +380,18 @@ export function AdminsPage() {
   const notify = useNotify();
   const queryClient = useQueryClient();
 
-  const { data: users = [], isLoading, error } = useQuery({
+  const {
+    data: users = [],
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ["admin-users"],
     queryFn: () => listAdminUsers(),
     staleTime: 60_000,
   });
 
   const { mutate: invite, isPending } = useMutation({
-    mutationFn: (emailToInvite: string) =>
-      inviteAdminUser({ data: { email: emailToInvite } }),
+    mutationFn: (emailToInvite: string) => inviteAdminUser({ data: { email: emailToInvite } }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-users"] });
       notify("Invitation sent successfully", { type: "success" });
@@ -416,10 +425,7 @@ export function AdminsPage() {
       </div>
 
       {showInvite && (
-        <form
-          onSubmit={handleSubmit}
-          className="flex items-center gap-2 p-4 border rounded-lg"
-        >
+        <form onSubmit={handleSubmit} className="flex items-center gap-2 p-4 border rounded-lg">
           <Input
             type="email"
             placeholder="admin@example.com"
@@ -497,11 +503,13 @@ export function AdminsPage() {
 **Step 2: Add `AdminsMenuItem` to `src/components/admin/app-sidebar.tsx`**
 
 Add `ShieldCheck` to the lucide import on line 13:
+
 ```ts
 import { CreditCard, ScanLine, ShieldCheck } from "lucide-react";
 ```
 
 Add this component after `PaymentsMenuItem` (after line 148):
+
 ```tsx
 export const AdminsMenuItem = ({ onClick }: { onClick?: () => void }) => {
   const match = useMatch({ path: "/admin/admins", end: false });
@@ -519,6 +527,7 @@ export const AdminsMenuItem = ({ onClick }: { onClick?: () => void }) => {
 ```
 
 Then in the `AppSidebar` function, add `<AdminsMenuItem onClick={handleClick} />` after `<PaymentsMenuItem onClick={handleClick} />` (line 75):
+
 ```tsx
               <CheckInMenuItem onClick={handleClick} />
               <PaymentsMenuItem onClick={handleClick} />
@@ -528,11 +537,13 @@ Then in the `AppSidebar` function, add `<AdminsMenuItem onClick={handleClick} />
 **Step 3: Wire the route in `src/routes/admin/$.tsx`**
 
 Add the import at the top (after the `PaymentsPage` import):
+
 ```ts
 import { AdminsPage } from "@/components/admin/admins-page";
 ```
 
 Add the route inside `<CustomRoutes>` (after the payments route):
+
 ```tsx
         <RouterRoute path="/payments" element={<PaymentsPage />} />
         <RouterRoute path="/admins" element={<AdminsPage />} />
@@ -565,5 +576,6 @@ bun run typecheck
 ```
 
 Expected:
+
 - All tests pass (including the 4 new admin-users handler tests)
 - No TypeScript errors

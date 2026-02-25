@@ -13,11 +13,13 @@
 ### Task 1: Add environment variable
 
 **Files:**
+
 - Modify: `.env`
 
 **Step 1: Add the key**
 
 Append to `.env`:
+
 ```
 PAYSTACK_SECRET_KEY=sk_live_YOUR_KEY_HERE
 ```
@@ -36,6 +38,7 @@ git commit -m "config: add PAYSTACK_SECRET_KEY env var"
 ### Task 2: Create Paystack server function with tests
 
 **Files:**
+
 - Create: `src/lib/paystack.ts`
 - Create: `src/lib/paystack.test.ts`
 
@@ -144,6 +147,7 @@ describe("fetchPaystackTransactions handler", () => {
 ```bash
 bun run test src/lib/paystack.test.ts
 ```
+
 Expected: FAIL — `Cannot find module './paystack'`
 
 **Step 3: Create the server function**
@@ -210,6 +214,7 @@ export const fetchPaystackTransactions = createServerFn()
 ```bash
 bun run test src/lib/paystack.test.ts
 ```
+
 Expected: 3 tests PASS
 
 **Step 5: Commit**
@@ -224,6 +229,7 @@ git commit -m "feat: add Paystack server function with tests"
 ### Task 3: Create the PaymentsPage component
 
 **Files:**
+
 - Create: `src/components/admin/payments-page.tsx`
 
 **Step 1: Create the component**
@@ -339,8 +345,7 @@ export function PaymentsPage() {
         <div className="flex items-center gap-2 text-red-600 text-sm bg-red-50 rounded-lg p-4 border border-red-200">
           <AlertCircle className="size-4 shrink-0" />
           <span>
-            Failed to load payments:{" "}
-            {error instanceof Error ? error.message : "Unknown error"}
+            Failed to load payments: {error instanceof Error ? error.message : "Unknown error"}
           </span>
         </div>
       )}
@@ -412,6 +417,7 @@ export function PaymentsPage() {
 ```bash
 bun run typecheck
 ```
+
 Expected: No errors related to `payments-page.tsx` or `paystack.ts`
 
 **Step 3: Commit**
@@ -426,6 +432,7 @@ git commit -m "feat: add PaymentsPage component"
 ### Task 4: Add sidebar menu item
 
 **Files:**
+
 - Modify: `src/components/admin/app-sidebar.tsx`
 
 **Step 1: Add the import and menu item**
@@ -433,6 +440,7 @@ git commit -m "feat: add PaymentsPage component"
 In `src/components/admin/app-sidebar.tsx`:
 
 Add `CreditCard` to the lucide imports at line 13:
+
 ```ts
 import { ScanLine, CreditCard } from "lucide-react";
 ```
@@ -466,6 +474,7 @@ In the `AppSidebar` function, after `<CheckInMenuItem onClick={handleClick} />`,
 ```bash
 bun run typecheck
 ```
+
 Expected: No errors
 
 **Step 3: Commit**
@@ -480,6 +489,7 @@ git commit -m "feat: add Payments link to sidebar"
 ### Task 5: Wire up the route
 
 **Files:**
+
 - Modify: `src/routes/admin/$.tsx`
 
 **Step 1: Add import and route**
@@ -510,6 +520,7 @@ The full `<CustomRoutes>` block should look like:
 ```bash
 bun run typecheck && bun run lint
 ```
+
 Expected: No errors
 
 **Step 3: Run full test suite**
@@ -517,6 +528,7 @@ Expected: No errors
 ```bash
 bun run test
 ```
+
 Expected: All tests pass (including the 3 paystack tests)
 
 **Step 4: Build verification**
@@ -524,6 +536,7 @@ Expected: All tests pass (including the 3 paystack tests)
 ```bash
 bun run build
 ```
+
 Expected: Build succeeds with no errors
 
 **Step 5: Commit**

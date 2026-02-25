@@ -13,6 +13,7 @@
 ### Context: Component patterns in this codebase
 
 **List pattern** (see `src/components/admin/ticket-list.tsx`):
+
 ```tsx
 import { List } from "@/components/admin/list";
 import { DataTable } from "@/components/admin/data-table";
@@ -23,9 +24,12 @@ export function MyList() {
       <DataTable>
         <DataTable.Col source="field_name" />
         <DataTable.Col source="field_name" label="Custom Label">
-          <CustomCellComponent />  {/* uses useRecordContext() */}
+          <CustomCellComponent /> {/* uses useRecordContext() */}
         </DataTable.Col>
-        <DataTable.Col label=""><ShowButton /><EditButton /></DataTable.Col>
+        <DataTable.Col label="">
+          <ShowButton />
+          <EditButton />
+        </DataTable.Col>
       </DataTable>
     </List>
   );
@@ -33,6 +37,7 @@ export function MyList() {
 ```
 
 **Show pattern** (see `src/components/admin/ticket-show.tsx`):
+
 ```tsx
 import { Show } from "@/components/admin/show";
 import { SimpleShowLayout } from "@/components/admin/simple-show-layout";
@@ -53,6 +58,7 @@ export function MyShow() {
 ```
 
 **Edit pattern** (see `src/components/admin/coupon-edit.tsx`):
+
 ```tsx
 import { Edit } from "@/components/admin/edit";
 import { SimpleForm } from "@/components/admin/simple-form";
@@ -75,6 +81,7 @@ export function MyEdit() {
 ### Task 1: events resource (list, show, edit)
 
 **Files:**
+
 - Create: `src/components/admin/event-list.tsx`
 - Create: `src/components/admin/event-show.tsx`
 - Create: `src/components/admin/event-edit.tsx`
@@ -196,6 +203,7 @@ export function EventEdit() {
 ```bash
 bun run build 2>&1 | grep -E "error|warning" | head -20
 ```
+
 Expected: No errors in the 3 new files.
 
 **Step 5: Commit**
@@ -213,6 +221,7 @@ git -C /Users/oluwasetemi/i/balanced/event-admin commit -m "feat: add event list
 ### Task 2: ticket_types resource (list, show, edit)
 
 **Files:**
+
 - Create: `src/components/admin/ticket-type-list.tsx`
 - Create: `src/components/admin/ticket-type-show.tsx`
 - Create: `src/components/admin/ticket-type-edit.tsx`
@@ -377,6 +386,7 @@ export function TicketTypeEdit() {
 ```bash
 bun run build 2>&1 | grep -E "error" | head -20
 ```
+
 Expected: No errors.
 
 **Step 5: Commit**
@@ -394,6 +404,7 @@ git -C /Users/oluwasetemi/i/balanced/event-admin commit -m "feat: add ticket_typ
 ### Task 3: group_bookings list and edit
 
 **Files:**
+
 - Create: `src/components/admin/group-booking-list.tsx`
 - Create: `src/components/admin/group-booking-edit.tsx`
 
@@ -535,6 +546,7 @@ git -C /Users/oluwasetemi/i/balanced/event-admin commit -m "feat: add group_book
 ### Task 4: group_booking show page (with embedded members)
 
 **Files:**
+
 - Create: `src/components/admin/group-booking-show.tsx`
 
 This is the most complex component. It uses `ReferenceManyField` to embed group members directly in the booking detail page.
@@ -637,11 +649,7 @@ export function GroupBookingShow() {
 
         {/* Embedded group members */}
         <RecordField source="group_members" label="Members">
-          <ReferenceManyField
-            reference="group_members"
-            target="group_booking_id"
-            label="Members"
-          >
+          <ReferenceManyField reference="group_members" target="group_booking_id" label="Members">
             <DataTable>
               <DataTable.Col source="member_position" label="#" />
               <DataTable.Col source="name" />
@@ -678,6 +686,7 @@ bun run build 2>&1 | grep -E "error" | head -20
 ```
 
 Common issue: `ReferenceField` may not accept `emptyText` prop. If TypeScript complains, wrap the reference in a custom cell component:
+
 ```tsx
 function AssignedTicketCell() {
   const record = useRecordContext();
@@ -703,6 +712,7 @@ git -C /Users/oluwasetemi/i/balanced/event-admin commit -m "feat: add group_book
 ### Task 5: group_member edit
 
 **Files:**
+
 - Create: `src/components/admin/group-member-edit.tsx`
 
 **Step 1: Create `src/components/admin/group-member-edit.tsx`**
@@ -736,6 +746,7 @@ git -C /Users/oluwasetemi/i/balanced/event-admin commit -m "feat: add group_memb
 ### Task 6: Wire all 4 resources in the admin route
 
 **Files:**
+
 - Modify: `src/routes/admin/$.tsx`
 
 **Step 1: Read the current file**
@@ -745,6 +756,7 @@ Current file at `/Users/oluwasetemi/i/balanced/event-admin/src/routes/admin/$.ts
 **Step 2: Add imports**
 
 Add to the imports at the top:
+
 ```tsx
 import { Calendar, Tags, Users, UsersRound } from "lucide-react";
 import { EventList } from "@/components/admin/event-list";
@@ -803,6 +815,7 @@ Note: `group_members` has NO `list` prop — this is intentional. It won't appea
 ```bash
 cd /Users/oluwasetemi/i/balanced/event-admin && bun run build && bun run lint && bun run test
 ```
+
 Expected: Build passes, 0 lint errors, 3 paystack tests pass.
 
 **Step 5: Commit**
