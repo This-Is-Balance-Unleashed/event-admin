@@ -222,9 +222,7 @@ export function ReconciliationPage() {
                   <TableCell>
                     <Checkbox
                       checked={selectedIds.has(ticket.id)}
-                      onCheckedChange={(checked) =>
-                        handleToggleRow(ticket.id, checked === true)
-                      }
+                      onCheckedChange={(checked) => handleToggleRow(ticket.id, checked === true)}
                       aria-label={`Select ticket ${ticket.id}`}
                     />
                   </TableCell>

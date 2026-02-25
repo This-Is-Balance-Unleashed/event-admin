@@ -63,7 +63,11 @@ export async function getReconciliationDataHandler(
       { headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" } },
     );
     if (!res.ok) throw new Error(`Paystack API error: ${res.status}`);
-    const body = (await res.json()) as { status: boolean; data: Array<{ reference: string; amount: number; channel: string; paid_at: string }>; meta: { page: number; pageCount: number } };
+    const body = (await res.json()) as {
+      status: boolean;
+      data: Array<{ reference: string; amount: number; channel: string; paid_at: string }>;
+      meta: { page: number; pageCount: number };
+    };
     if (!body.status) throw new Error("Paystack API returned status false");
     for (const tx of body.data) {
       successRefs.set(tx.reference, {
@@ -79,7 +83,9 @@ export async function getReconciliationDataHandler(
   // 2. Fetch all reserved tickets from Supabase
   const { data: tickets, error } = await client
     .from("tickets")
-    .select("id, email, name, paystack_reference, ticket_type_id, price_paid, status, group_booking_id, event_id")
+    .select(
+      "id, email, name, paystack_reference, ticket_type_id, price_paid, status, group_booking_id, event_id",
+    )
     .eq("status", "reserved");
 
   if (error) throw error;
@@ -124,22 +130,26 @@ export async function resolveTicketsHandler(
   // 1. Fetch ticket details for given IDs
   const { data: tickets, error } = await client
     .from("tickets")
-    .select("id, email, name, paystack_reference, event_id, group_booking_id, ticket_secret, qr_code_url")
+    .select(
+      "id, email, name, paystack_reference, event_id, group_booking_id, ticket_secret, qr_code_url",
+    )
     .in("id", ticketIds);
 
   if (error) throw error;
   if (!tickets || tickets.length === 0) return { resolved: 0, errors: [] };
 
   // 2. Expand: include all sibling tickets from the same group bookings
-  const groupIds = [...new Set(
-    tickets.filter((t) => t.group_booking_id).map((t) => t.group_booking_id as string),
-  )];
+  const groupIds = [
+    ...new Set(tickets.filter((t) => t.group_booking_id).map((t) => t.group_booking_id as string)),
+  ];
 
   let allTickets = [...tickets];
   if (groupIds.length > 0) {
     const { data: groupTickets } = await client
       .from("tickets")
-      .select("id, email, name, paystack_reference, event_id, group_booking_id, ticket_secret, qr_code_url")
+      .select(
+        "id, email, name, paystack_reference, event_id, group_booking_id, ticket_secret, qr_code_url",
+      )
       .in("group_booking_id", groupIds);
 
     if (groupTickets) {
@@ -157,7 +167,8 @@ export async function resolveTicketsHandler(
   for (const ticket of allTickets) {
     try {
       const { baseRef, position } = parseReference(ticket.paystack_reference);
-      const ticketSecret = ticket.ticket_secret ?? `${baseRef}::${ticket.event_id}::ticket-${position}`;
+      const ticketSecret =
+        ticket.ticket_secret ?? `${baseRef}::${ticket.event_id}::ticket-${position}`;
 
       // Generate QR code PNG buffer (same options as unleashed-app verify route)
       const qrBuffer = await QRCode.toBuffer(ticketSecret, {

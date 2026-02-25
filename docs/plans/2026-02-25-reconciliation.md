@@ -13,6 +13,7 @@
 ### Task 0: Install qrcode dependency
 
 **Files:**
+
 - Modify: `package.json` (via bun add)
 
 **Step 1: Install the package**
@@ -42,6 +43,7 @@ cd /Users/oluwasetemi/i/balanced/event-admin && git add package.json bun.lock &&
 ### Task 1: Reconciliation handler + tests (TDD)
 
 **Files:**
+
 - Create: `src/lib/reconciliation-handler.ts`
 - Create: `src/lib/reconciliation.test.ts`
 
@@ -98,7 +100,14 @@ describe("parseReference", () => {
 describe("getReconciliationDataHandler", () => {
   const PAYSTACK_SUCCESS_PAGE = {
     status: true,
-    data: [{ reference: "1771972002656_gbs248", amount: 205000, channel: "bank_transfer", paid_at: "2026-02-24T10:00:00Z" }],
+    data: [
+      {
+        reference: "1771972002656_gbs248",
+        amount: 205000,
+        channel: "bank_transfer",
+        paid_at: "2026-02-24T10:00:00Z",
+      },
+    ],
     meta: { page: 1, pageCount: 1 },
   };
 
@@ -171,7 +180,9 @@ describe("getReconciliationDataHandler", () => {
   it("throws when PAYSTACK_SECRET_KEY is not set", async () => {
     delete process.env.PAYSTACK_SECRET_KEY;
     const client = makeMockClient([]);
-    await expect(getReconciliationDataHandler(client)).rejects.toThrow("PAYSTACK_SECRET_KEY is not set");
+    await expect(getReconciliationDataHandler(client)).rejects.toThrow(
+      "PAYSTACK_SECRET_KEY is not set",
+    );
   });
 });
 
@@ -346,7 +357,9 @@ export async function getReconciliationDataHandler(
   // 2. Fetch all reserved tickets from Supabase
   const { data: tickets, error } = await client
     .from("tickets")
-    .select("id, email, name, paystack_reference, ticket_type_id, price_paid, status, group_booking_id, event_id")
+    .select(
+      "id, email, name, paystack_reference, ticket_type_id, price_paid, status, group_booking_id, event_id",
+    )
     .eq("status", "reserved");
 
   if (error) throw error;
@@ -389,22 +402,26 @@ export async function resolveTicketsHandler(
   // 1. Fetch ticket details for given IDs
   const { data: tickets, error } = await client
     .from("tickets")
-    .select("id, email, name, paystack_reference, event_id, group_booking_id, ticket_secret, qr_code_url")
+    .select(
+      "id, email, name, paystack_reference, event_id, group_booking_id, ticket_secret, qr_code_url",
+    )
     .in("id", ticketIds);
 
   if (error) throw error;
   if (!tickets || tickets.length === 0) return { resolved: 0, errors: [] };
 
   // 2. Expand: include all sibling tickets from the same group bookings
-  const groupIds = [...new Set(
-    tickets.filter((t) => t.group_booking_id).map((t) => t.group_booking_id as string),
-  )];
+  const groupIds = [
+    ...new Set(tickets.filter((t) => t.group_booking_id).map((t) => t.group_booking_id as string)),
+  ];
 
   let allTickets = [...tickets];
   if (groupIds.length > 0) {
     const { data: groupTickets } = await client
       .from("tickets")
-      .select("id, email, name, paystack_reference, event_id, group_booking_id, ticket_secret, qr_code_url")
+      .select(
+        "id, email, name, paystack_reference, event_id, group_booking_id, ticket_secret, qr_code_url",
+      )
       .in("group_booking_id", groupIds);
 
     if (groupTickets) {
@@ -422,7 +439,8 @@ export async function resolveTicketsHandler(
   for (const ticket of allTickets) {
     try {
       const { baseRef, position } = parseReference(ticket.paystack_reference);
-      const ticketSecret = ticket.ticket_secret ?? `${baseRef}::${ticket.event_id}::ticket-${position}`;
+      const ticketSecret =
+        ticket.ticket_secret ?? `${baseRef}::${ticket.event_id}::ticket-${position}`;
 
       // Generate QR code PNG buffer
       const qrBuffer = await QRCode.toBuffer(ticketSecret, {
@@ -484,6 +502,7 @@ cd /Users/oluwasetemi/i/balanced/event-admin && bun run test src/lib/reconciliat
 Expected: all 8 tests PASS (3 parseReference + 3 getReconciliationDataHandler + 2 resolveTicketsHandler)
 
 If tests fail, likely causes:
+
 - `vi.mock("qrcode", ...)` hoisting — ensure mock is declared before the import
 - The Supabase client chain mock may need `.in()` chained differently — verify the mock returns a promise at the right step
 
@@ -504,6 +523,7 @@ cd /Users/oluwasetemi/i/balanced/event-admin && git add src/lib/reconciliation-h
 ### Task 2: Server function wrappers
 
 **Files:**
+
 - Create: `src/lib/reconciliation.ts`
 
 **Step 1: Create `src/lib/reconciliation.ts`**
@@ -513,10 +533,7 @@ Follow the exact same pattern as `src/lib/admin-users.ts`:
 ```ts
 import { createServerFn } from "@tanstack/react-start";
 import { supabaseClient } from "./supabase-provider";
-import {
-  getReconciliationDataHandler,
-  resolveTicketsHandler,
-} from "./reconciliation-handler";
+import { getReconciliationDataHandler, resolveTicketsHandler } from "./reconciliation-handler";
 
 export type { AffectedTicket, ResolveResult } from "./reconciliation-handler";
 
@@ -552,6 +569,7 @@ cd /Users/oluwasetemi/i/balanced/event-admin && git add src/lib/reconciliation.t
 ### Task 3: ReconciliationPage component
 
 **Files:**
+
 - Create: `src/components/admin/reconciliation-page.tsx`
 
 **Step 1: Create `src/components/admin/reconciliation-page.tsx`**
@@ -586,7 +604,14 @@ export function ReconciliationPage() {
   const notify = useNotify();
   const queryClient = useQueryClient();
 
-  const { data: tickets = [], isLoading, isError, error, refetch, isFetching } = useQuery({
+  const {
+    data: tickets = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+    isFetching,
+  } = useQuery({
     queryKey: ["reconciliation"],
     queryFn: () => getReconciliationData(),
     staleTime: 30_000,
@@ -780,12 +805,14 @@ cd /Users/oluwasetemi/i/balanced/event-admin && git add src/components/admin/rec
 ### Task 4: Sidebar entry + route wiring
 
 **Files:**
+
 - Modify: `src/components/admin/app-sidebar.tsx`
 - Modify: `src/routes/admin/$.tsx`
 
 **Step 1: Add `ReconciliationMenuItem` to `app-sidebar.tsx`**
 
 Add `AlertTriangle` to the lucide import:
+
 ```ts
 // BEFORE:
 import { CreditCard, ScanLine, ShieldCheck } from "lucide-react";
@@ -813,6 +840,7 @@ export const ReconciliationMenuItem = ({ onClick }: { onClick?: () => void }) =>
 ```
 
 In the `AppSidebar` function, add `<ReconciliationMenuItem onClick={handleClick} />` after `<AdminsMenuItem onClick={handleClick} />`:
+
 ```tsx
               <AdminsMenuItem onClick={handleClick} />
               <ReconciliationMenuItem onClick={handleClick} />
@@ -821,11 +849,13 @@ In the `AppSidebar` function, add `<ReconciliationMenuItem onClick={handleClick}
 **Step 2: Wire the route in `src/routes/admin/$.tsx`**
 
 Add import after the `AdminsPage` import:
+
 ```ts
 import { ReconciliationPage } from "@/components/admin/reconciliation-page";
 ```
 
 Add route in `<CustomRoutes>` after the `/admins` route:
+
 ```tsx
         <RouterRoute path="/admins" element={<AdminsPage />} />
         <RouterRoute path="/reconciliation" element={<ReconciliationPage />} />
@@ -856,10 +886,12 @@ cd /Users/oluwasetemi/i/balanced/event-admin && bun run test --run && bun run ty
 ```
 
 Expected:
+
 - All tests pass (existing 8 + 8 new reconciliation tests = 16 total)
 - No TypeScript errors
 
 Manual smoke test:
+
 1. Visit `/admin/reconciliation` — should show a list of affected tickets
 2. Check one or more checkboxes — "Resolve N Selected" button appears
 3. Click Resolve — tickets update to "Resolved" state, success toast shows

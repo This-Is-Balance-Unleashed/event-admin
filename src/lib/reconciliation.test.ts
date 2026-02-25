@@ -46,7 +46,14 @@ describe("parseReference", () => {
 describe("getReconciliationDataHandler", () => {
   const PAYSTACK_SUCCESS_PAGE = {
     status: true,
-    data: [{ reference: "1771972002656_gbs248", amount: 205000, channel: "bank_transfer", paid_at: "2026-02-24T10:00:00Z" }],
+    data: [
+      {
+        reference: "1771972002656_gbs248",
+        amount: 205000,
+        channel: "bank_transfer",
+        paid_at: "2026-02-24T10:00:00Z",
+      },
+    ],
     meta: { page: 1, pageCount: 1 },
   };
 
@@ -121,7 +128,9 @@ describe("getReconciliationDataHandler", () => {
   it("throws when PAYSTACK_SECRET_KEY is not set", async () => {
     delete process.env.PAYSTACK_SECRET_KEY;
     const client = makeMockClient([]);
-    await expect(getReconciliationDataHandler(client)).rejects.toThrow("PAYSTACK_SECRET_KEY is not set");
+    await expect(getReconciliationDataHandler(client)).rejects.toThrow(
+      "PAYSTACK_SECRET_KEY is not set",
+    );
   });
 });
 
