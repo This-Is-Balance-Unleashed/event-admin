@@ -10,7 +10,7 @@ import {
 import { tanStackRouterProvider } from "ra-router-tanstack";
 
 const { Link, useMatch } = tanStackRouterProvider;
-import { CreditCard, ScanLine } from "lucide-react";
+import { CreditCard, ScanLine, ShieldCheck } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -73,6 +73,7 @@ export function AppSidebar() {
                 ))}
               <CheckInMenuItem onClick={handleClick} />
               <PaymentsMenuItem onClick={handleClick} />
+              <AdminsMenuItem onClick={handleClick} />
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -141,6 +142,20 @@ export const PaymentsMenuItem = ({ onClick }: { onClick?: () => void }) => {
         <Link to="/admin/payments" onClick={onClick}>
           <CreditCard />
           Payments
+        </Link>
+      </SidebarMenuButton>
+    </SidebarMenuItem>
+  );
+};
+
+export const AdminsMenuItem = ({ onClick }: { onClick?: () => void }) => {
+  const match = useMatch({ path: "/admin/admins", end: false });
+  return (
+    <SidebarMenuItem>
+      <SidebarMenuButton asChild isActive={!!match}>
+        <Link to="/admin/admins" onClick={onClick}>
+          <ShieldCheck />
+          Admins
         </Link>
       </SidebarMenuButton>
     </SidebarMenuItem>

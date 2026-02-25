@@ -12,6 +12,7 @@ import { CouponCreate } from "@/components/admin/coupon-create";
 import { CouponEdit } from "@/components/admin/coupon-edit";
 import { CheckInPage } from "@/components/admin/check-in-page";
 import { PaymentsPage } from "@/components/admin/payments-page";
+import { AdminsPage } from "@/components/admin/admins-page";
 import { EventList } from "@/components/admin/event-list";
 import { EventShow } from "@/components/admin/event-show";
 import { EventEdit } from "@/components/admin/event-edit";
@@ -88,6 +89,7 @@ function AdminApp() {
       <CustomRoutes>
         <RouterRoute path="/checkin" element={<CheckInPage />} />
         <RouterRoute path="/payments" element={<PaymentsPage />} />
+        <RouterRoute path="/admins" element={<AdminsPage />} />
       </CustomRoutes>
     </Admin>
   );
