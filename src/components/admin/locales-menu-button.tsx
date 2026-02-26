@@ -44,14 +44,9 @@ export function LocalesMenuButton() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         {languages.map((language) => (
-          <DropdownMenuItem
-            key={language.locale}
-            onClick={changeLocale(language.locale)}
-          >
+          <DropdownMenuItem key={language.locale} onClick={changeLocale(language.locale)}>
             {getNameForLocale(language.locale)}
-            <Check
-              className={cn("ml-auto", locale !== language.locale && "hidden")}
-            />
+            <Check className={cn("ml-auto", locale !== language.locale && "hidden")} />
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>

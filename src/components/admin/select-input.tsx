@@ -1,9 +1,5 @@
 import { X } from "lucide-react";
-import type {
-  ChoicesProps,
-  InputProps,
-  SupportCreateSuggestionOptions,
-} from "ra-core";
+import type { ChoicesProps, InputProps, SupportCreateSuggestionOptions } from "ra-core";
 import {
   FieldTitle,
   useChoices,
@@ -136,8 +132,7 @@ export const SelectInput = (props: SelectInputProps) => {
 
   const getRecordRepresentation = useGetRecordRepresentation(resource);
   const { getChoiceText, getChoiceValue, getDisableValue } = useChoices({
-    optionText:
-      optionText ?? (isFromReference ? getRecordRepresentation : undefined),
+    optionText: optionText ?? (isFromReference ? getRecordRepresentation : undefined),
     optionValue,
     disableValue,
     translateChoice: translateChoice ?? !isFromReference,
@@ -181,9 +176,7 @@ export const SelectInput = (props: SelectInputProps) => {
         field.onChange(emptyValue);
       } else {
         // Find the choice by value and pass it to field.onChange
-        const choice = allChoices?.find(
-          (choice) => getChoiceValue(choice) === value,
-        );
+        const choice = allChoices?.find((choice) => getChoiceValue(choice) === value);
         field.onChange(choice ? getChoiceValue(choice) : value);
       }
     },
@@ -206,11 +199,7 @@ export const SelectInput = (props: SelectInputProps) => {
 
   if (isPending) {
     return (
-      <FormField
-        id={id}
-        name={field.name}
-        className={cn("w-full min-w-20", className)}
-      >
+      <FormField id={id} name={field.name} className={cn("w-full min-w-20", className)}>
         {label !== "" && label !== false && (
           <FormLabel>
             <FieldTitle
@@ -237,19 +226,14 @@ export const SelectInput = (props: SelectInputProps) => {
   }
 
   // Handle reset functionality
-  const handleReset = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleReset = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     field.onChange(emptyValue);
   };
 
   return (
     <>
-      <FormField
-        id={id}
-        name={field.name}
-        className={cn("w-full min-w-20", className)}
-        {...rest}
-      >
+      <FormField id={id} name={field.name} className={cn("w-full min-w-20", className)} {...rest}>
         {label !== "" && label !== false && (
           <FormLabel>
             <FieldTitle
@@ -277,13 +261,14 @@ export const SelectInput = (props: SelectInputProps) => {
               <SelectValue placeholder={renderEmptyItemOption()} />
 
               {field.value && field.value !== emptyValue ? (
-                <div
-                  role="button"
+                <button
+                  type="button"
                   className="p-0 ml-auto pointer-events-auto hover:bg-transparent text-muted-foreground opacity-50 hover:opacity-100"
                   onClick={handleReset}
+                  aria-label="Clear selection"
                 >
                   <X className="h-4 w-4" />
-                </div>
+                </button>
               ) : null}
             </SelectTrigger>
             <SelectContent>
@@ -293,15 +278,9 @@ export const SelectInput = (props: SelectInputProps) => {
                 const isDisabled = getDisableValue(choice);
 
                 return (
-                  <SelectItem
-                    key={value}
-                    value={value?.toString()}
-                    disabled={isDisabled}
-                  >
+                  <SelectItem key={value} value={value?.toString()} disabled={isDisabled}>
                     {renderMenuItemOption(
-                      !!createItem && choice?.id === createItem.id
-                        ? createItem
-                        : choice,
+                      !!createItem && choice?.id === createItem.id ? createItem : choice,
                     )}
                   </SelectItem>
                 );

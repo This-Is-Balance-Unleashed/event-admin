@@ -24,9 +24,7 @@ const DateFieldImpl = <
   const translate = useTranslate();
 
   if (!showTime && !showDate) {
-    throw new Error(
-      "<DateField> cannot have showTime and showDate false at the same time",
-    );
+    throw new Error("<DateField> cannot have showTime and showDate false at the same time");
   }
 
   const value = useFieldValue({ source, record, defaultValue });
@@ -36,9 +34,7 @@ const DateFieldImpl = <
     }
 
     return (
-      <span {...rest}>
-        {typeof empty === "string" ? translate(empty, { _: empty }) : empty}
-      </span>
+      <span {...rest}>{typeof empty === "string" ? translate(empty, { _: empty }) : empty}</span>
     );
   }
 
@@ -56,9 +52,7 @@ const DateFieldImpl = <
       // who may see a different date when calling toLocaleDateString().
       const dateOptions =
         options ??
-        (typeof value === "string" && value.length <= 10
-          ? { timeZone: "UTC" }
-          : undefined);
+        (typeof value === "string" && value.length <= 10 ? { timeZone: "UTC" } : undefined);
       dateString = toLocaleStringSupportsLocales
         ? date.toLocaleDateString(locales, dateOptions)
         : date.toLocaleDateString();

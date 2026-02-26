@@ -69,5 +69,4 @@ export interface EmailFieldProps<
   extends FieldProps<RecordType>, AnchorHTMLAttributes<HTMLAnchorElement> {}
 
 // useful to prevent click bubbling in a DataTable with rowClick
-const stopPropagation = (e: React.MouseEvent<HTMLAnchorElement>) =>
-  e.stopPropagation();
+const stopPropagation = (e: React.MouseEvent<HTMLAnchorElement>) => e.stopPropagation();

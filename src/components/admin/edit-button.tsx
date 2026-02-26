@@ -2,12 +2,7 @@ import React from "react";
 import { buttonVariants } from "@/components/ui/button";
 import { Pencil } from "lucide-react";
 import type { RaRecord } from "ra-core";
-import {
-  useCreatePath,
-  useRecordContext,
-  useResourceContext,
-  Translate,
-} from "ra-core";
+import { useCreatePath, useRecordContext, useResourceContext, Translate } from "ra-core";
 import { Link } from "@/lib/router";
 
 export type EditButtonProps = {
@@ -47,15 +42,9 @@ export const EditButton = (props: EditButtonProps) => {
     id: record?.id,
   });
   return (
-    <Link
-      className={buttonVariants({ variant: "outline" })}
-      to={link}
-      onClick={stopPropagation}
-    >
+    <Link className={buttonVariants({ variant: "outline" })} to={link} onClick={stopPropagation}>
       <Pencil />
-      <Translate i18nKey={props.label ?? "ra.action.edit"}>
-        {props.label ?? "Edit"}
-      </Translate>
+      <Translate i18nKey={props.label ?? "ra.action.edit"}>{props.label ?? "Edit"}</Translate>
     </Link>
   );
 };

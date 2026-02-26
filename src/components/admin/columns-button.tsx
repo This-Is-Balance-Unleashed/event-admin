@@ -1,10 +1,4 @@
-import {
-  useState,
-  useEffect,
-  Children,
-  type ComponentProps,
-  type ReactNode,
-} from "react";
+import { useState, useEffect, Children, type ComponentProps, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -31,11 +25,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FieldToggle } from "@/components/admin/field-toggle";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Popover, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 
@@ -82,12 +72,7 @@ export const ColumnsButton = (props: ColumnsButtonProps) => {
           {isMobile ? (
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  aria-label={title}
-                  {...rest}
-                >
+                <Button variant="ghost" size="icon" aria-label={title} {...rest}>
                   <Columns className="size-4" />
                 </Button>
               </TooltipTrigger>
@@ -130,13 +115,8 @@ export interface ColumnsButtonProps extends ComponentProps<typeof Button> {
 export const ColumnsSelector = ({ children }: ColumnsSelectorProps) => {
   const translate = useTranslate();
   const { storeKey, defaultHiddenColumns } = useDataTableStoreContext();
-  const [columnRanks, setColumnRanks] = useStore<number[] | undefined>(
-    `${storeKey}_columnRanks`,
-  );
-  const [_hiddenColumns, setHiddenColumns] = useStore<string[]>(
-    storeKey,
-    defaultHiddenColumns,
-  );
+  const [columnRanks, setColumnRanks] = useStore<number[] | undefined>(`${storeKey}_columnRanks`);
+  const [_hiddenColumns, setHiddenColumns] = useStore<string[]>(storeKey, defaultHiddenColumns);
   const elementId = `${storeKey}-columnsSelector`;
 
   const [container, setContainer] = useState<HTMLElement | null>(() =>
@@ -145,12 +125,7 @@ export const ColumnsSelector = ({ children }: ColumnsSelectorProps) => {
 
   // on first mount, we don't have the container yet, so we wait for it
   useEffect(() => {
-    if (
-      container &&
-      typeof document !== "undefined" &&
-      document.body.contains(container)
-    )
-      return;
+    if (container && typeof document !== "undefined" && document.body.contains(container)) return;
     // look for the container in the DOM every 100ms
     const interval = setInterval(() => {
       const target = document.getElementById(elementId);
@@ -201,10 +176,7 @@ export const ColumnsSelector = ({ children }: ColumnsSelectorProps) => {
       <ul className="max-h-[50vh] p-1 overflow-auto">
         {paddedColumnRanks.map((position, index) => (
           <DataTableColumnRankContext.Provider value={position} key={index}>
-            <DataTableColumnFilterContext.Provider
-              value={columnFilter}
-              key={index}
-            >
+            <DataTableColumnFilterContext.Provider value={columnFilter} key={index}>
               {childrenArray[position]}
             </DataTableColumnFilterContext.Provider>
           </DataTableColumnRankContext.Provider>
@@ -239,14 +211,9 @@ export const ColumnsSelectorItem = <
 }: ColumnsSelectorItemProps<RecordType>) => {
   const resource = useResourceContext();
   const { storeKey, defaultHiddenColumns } = useDataTableStoreContext();
-  const [hiddenColumns, setHiddenColumns] = useStore<string[]>(
-    storeKey,
-    defaultHiddenColumns,
-  );
+  const [hiddenColumns, setHiddenColumns] = useStore<string[]>(storeKey, defaultHiddenColumns);
   const columnRank = useDataTableColumnRankContext();
-  const [columnRanks, setColumnRanks] = useStore<number[]>(
-    `${storeKey}_columnRanks`,
-  );
+  const [columnRanks, setColumnRanks] = useStore<number[]>(`${storeKey}_columnRanks`);
   const columnFilter = useDataTableColumnFilterContext();
   const translateLabel = useTranslateLabel();
   if (!source && !label) return null;
@@ -258,17 +225,11 @@ export const ColumnsSelectorItem = <
   const isColumnHidden = hiddenColumns.includes(source!);
   const isColumnFiltered = fieldLabelMatchesFilter(fieldLabel, columnFilter);
 
-  const handleMove = (
-    index1: number | string,
-    index2: number | string | null,
-  ) => {
+  const handleMove = (index1: number | string, index2: number | string | null) => {
     const colRanks = !columnRanks
       ? padRanks([], Math.max(Number(index1), Number(index2 || 0)) + 1)
       : Math.max(Number(index1), Number(index2 || 0)) > columnRanks.length - 1
-        ? padRanks(
-            columnRanks,
-            Math.max(Number(index1), Number(index2 || 0)) + 1,
-          )
+        ? padRanks(columnRanks, Math.max(Number(index1), Number(index2 || 0)) + 1)
         : columnRanks;
     const index1Pos = colRanks.findIndex((index) => index == Number(index1));
     const index2Pos = colRanks.findIndex((index) => index == Number(index2));
@@ -303,9 +264,7 @@ export const ColumnsSelectorItem = <
       selected={!isColumnHidden}
       onToggle={() =>
         isColumnHidden
-          ? setHiddenColumns(
-              hiddenColumns.filter((column) => column !== source!),
-            )
+          ? setHiddenColumns(hiddenColumns.filter((column) => column !== source!))
           : setHiddenColumns([...hiddenColumns, source!])
       }
       onMove={handleMove}
@@ -332,9 +291,7 @@ export interface ColumnsSelectorItemProps<
 }
 // Function to help with column ranking
 const padRanks = (ranks: number[], length: number) =>
-  ranks.concat(
-    Array.from({ length: length - ranks.length }, (_, i) => ranks.length + i),
-  );
+  ranks.concat(Array.from({ length: length - ranks.length }, (_, i) => ranks.length + i));
 
 const fieldLabelMatchesFilter = (fieldLabel: string, columnFilter?: string) =>
   columnFilter

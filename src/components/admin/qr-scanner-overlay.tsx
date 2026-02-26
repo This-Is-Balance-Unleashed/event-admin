@@ -1,43 +1,43 @@
-import { useEffect, useRef } from 'react'
-import QrScanner from 'qr-scanner'
-import { Button } from '@/components/ui/button'
-import { X, Camera } from 'lucide-react'
+import { useEffect, useRef } from "react";
+import QrScanner from "qr-scanner";
+import { Button } from "@/components/ui/button";
+import { X, Camera } from "lucide-react";
 
 interface QrScannerOverlayProps {
-  onScan: (value: string) => void
-  onClose: () => void
+  onScan: (value: string) => void;
+  onClose: () => void;
 }
 
 export function QrScannerOverlay({ onScan, onClose }: QrScannerOverlayProps) {
-  const videoRef = useRef<HTMLVideoElement>(null)
-  const scannerRef = useRef<QrScanner | null>(null)
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const scannerRef = useRef<QrScanner | null>(null);
 
   useEffect(() => {
-    if (!videoRef.current) return
+    if (!videoRef.current) return;
 
     const scanner = new QrScanner(
       videoRef.current,
       (result) => {
-        onScan(result.data)
-        scanner.stop()
+        onScan(result.data);
+        scanner.stop();
       },
       {
         highlightScanRegion: true,
         highlightCodeOutline: true,
         returnDetailedScanResult: true,
-      }
-    )
+      },
+    );
 
-    scannerRef.current = scanner
+    scannerRef.current = scanner;
     scanner.start().catch(() => {
       // Camera permission denied or unavailable — close gracefully
-      onClose()
-    })
+      onClose();
+    });
 
     return () => {
-      scanner.destroy()
-    }
-  }, [onScan, onClose])
+      scanner.destroy();
+    };
+  }, [onScan, onClose]);
 
   return (
     <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/90">
@@ -54,7 +54,9 @@ export function QrScannerOverlay({ onScan, onClose }: QrScannerOverlayProps) {
 
         {/* Camera feed */}
         <div className="relative overflow-hidden rounded-xl border-2 border-white/30 bg-black aspect-square">
-          <video ref={videoRef} className="w-full h-full object-cover" />
+          <video ref={videoRef} className="w-full h-full object-cover">
+            <track kind="captions" />
+          </video>
           {/* Corner guides */}
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
             <div className="size-48 relative">
@@ -71,7 +73,7 @@ export function QrScannerOverlay({ onScan, onClose }: QrScannerOverlayProps) {
         </p>
       </div>
     </div>
-  )
+  );
 }
 
 // Small trigger button used inside the check-in form
@@ -87,5 +89,5 @@ export function ScanQrButton({ onClick }: { onClick: () => void }) {
     >
       <Camera className="size-5" />
     </Button>
-  )
+  );
 }

@@ -1,0 +1,12 @@
+# Act configuration file
+# Use medium-sized Ubuntu image for better compatibility
+-P ubuntu-latest=catthehacker/ubuntu:act-latest
+
+# Use artifacts server for faster runs
+--artifact-server-path=/tmp/artifacts
+
+# Enable verbose output
+--verbose
+
+# Container architecture
+--container-architecture linux/amd64

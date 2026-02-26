@@ -2,12 +2,7 @@ import React from "react";
 import { Link } from "@/lib/router";
 import { buttonVariants } from "@/components/ui/button";
 import { Eye } from "lucide-react";
-import {
-  Translate,
-  useCreatePath,
-  useRecordContext,
-  useResourceContext,
-} from "ra-core";
+import { Translate, useCreatePath, useRecordContext, useResourceContext } from "ra-core";
 
 export type ShowButtonProps = {
   label?: string;
@@ -46,9 +41,7 @@ export const ShowButton = (props: ShowButtonProps) => {
       {...rest}
     >
       {icon ?? <Eye />}
-      <Translate i18nKey={label ?? "ra.action.show"}>
-        {label ?? "Show"}
-      </Translate>
+      <Translate i18nKey={label ?? "ra.action.show"}>{label ?? "Show"}</Translate>
     </Link>
   );
 };

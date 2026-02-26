@@ -45,15 +45,8 @@ export const ListPagination = ({
   className?: string;
 }) => {
   const translate = useTranslate();
-  const {
-    hasPreviousPage,
-    hasNextPage,
-    page,
-    perPage,
-    setPerPage,
-    total,
-    setPage,
-  } = useListPaginationContext();
+  const { hasPreviousPage, hasNextPage, page, perPage, setPerPage, total, setPage } =
+    useListPaginationContext();
 
   const pageStart = (page - 1) * perPage + 1;
   const pageEnd = hasNextPage ? page * perPage : total;
@@ -68,10 +61,7 @@ export const ListPagination = ({
   };
 
   const startPages = range(1, Math.min(boundaryCount, count));
-  const endPages = range(
-    Math.max(count - boundaryCount + 1, boundaryCount + 1),
-    count,
-  );
+  const endPages = range(Math.max(count - boundaryCount + 1, boundaryCount + 1), count);
 
   const siblingsStart = Math.max(
     Math.min(
@@ -105,14 +95,10 @@ export const ListPagination = ({
   };
 
   return (
-    <div
-      className={`flex items-center justify-end space-x-2 gap-4 ${className}`}
-    >
+    <div className={`flex items-center justify-end space-x-2 gap-4 ${className}`}>
       <div className="hidden md:flex items-center space-x-2">
         <p className="text-sm font-medium">
-          <Translate i18nKey="ra.navigation.page_rows_per_page">
-            Rows per page
-          </Translate>
+          <Translate i18nKey="ra.navigation.page_rows_per_page">Rows per page</Translate>
         </p>
         <Select
           value={perPage.toString()}
@@ -141,9 +127,7 @@ export const ListPagination = ({
             total: total === -1 ? pageEnd : total,
           }}
         >
-          {total != null
-            ? `${pageStart}-${pageEnd} of ${total === -1 ? pageEnd : total}`
-            : null}
+          {total != null ? `${pageStart}-${pageEnd} of ${total === -1 ? pageEnd : total}` : null}
         </Translate>
       </div>
       <Pagination className="-w-full -mx-auto">

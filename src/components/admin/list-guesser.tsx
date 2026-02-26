@@ -77,8 +77,7 @@ export const ListGuesser = <RecordType extends RaRecord = RaRecord>(
       perPage={perPage}
       resource={resource}
       queryOptions={{
-        placeholderData: (previousData) =>
-          keepPreviousData ? previousData : undefined,
+        placeholderData: (previousData) => (keepPreviousData ? previousData : undefined),
       }}
       sort={sort}
     >
@@ -87,9 +86,7 @@ export const ListGuesser = <RecordType extends RaRecord = RaRecord>(
   );
 };
 
-const ListViewGuesser = (
-  props: Omit<ListViewProps, "children"> & { enableLog?: boolean },
-) => {
+const ListViewGuesser = (props: Omit<ListViewProps, "children"> & { enableLog?: boolean }) => {
   const { data } = useListContext();
   const resource = useResourceContext();
   const [child, setChild] = useState<React.ReactElement | null>(null);
@@ -102,17 +99,11 @@ const ListViewGuesser = (
   useEffect(() => {
     if (data && data.length > 0 && !child) {
       const inferredElements = getElementsFromRecords(data, listFieldTypes);
-      const inferredChild = new InferredElement(
-        listFieldTypes.table,
-        null,
-        inferredElements,
-      );
+      const inferredChild = new InferredElement(listFieldTypes.table, null, inferredElements);
       const inferredChildElement = inferredChild.getElement();
       const representation = inferredChild.getRepresentation();
       if (!resource) {
-        throw new Error(
-          "Cannot use <ListGuesser> outside of a ResourceContext",
-        );
+        throw new Error("Cannot use <ListGuesser> outside of a ResourceContext");
       }
       if (!inferredChildElement || !representation) {
         return;
@@ -138,12 +129,7 @@ const ListViewGuesser = (
           `Guessed List:
 
 ${components
-  .map(
-    (component) =>
-      `import { ${component} } from "@/components/admin/${kebabCase(
-        component,
-      )}";`,
-  )
+  .map((component) => `import { ${component} } from "@/components/admin/${kebabCase(component)}";`)
   .join("\n")}
 
 export const ${capitalize(singularize(resource))}List = () => (
@@ -164,14 +150,9 @@ const listFieldTypes = {
     component: (props: any) => {
       return <DataTable {...props} />;
     },
-    representation: (
-      _props: any,
-      children: { getRepresentation: () => string }[],
-    ) =>
+    representation: (_props: any, children: { getRepresentation: () => string }[]) =>
       `        <DataTable>
-${children
-  .map((child) => `            ${child.getRepresentation()}`)
-  .join("\n")}
+${children.map((child) => `            ${child.getRepresentation()}`).join("\n")}
         </DataTable>`,
   },
 
@@ -229,8 +210,7 @@ ${children
   },
   string: {
     component: DataTable.Col,
-    representation: (props: any) =>
-      `<DataTable.Col source="${props.source}" />`,
+    representation: (props: any) => `<DataTable.Col source="${props.source}" />`,
   },
 };
 

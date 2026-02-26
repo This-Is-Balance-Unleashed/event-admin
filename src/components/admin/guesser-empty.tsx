@@ -7,8 +7,7 @@ export const GuesserEmpty = ({
   message = "ra.guesser.empty.message",
 }: GuesserEmptyProps) => {
   const translate = useTranslate();
-  const resolvedTitle =
-    typeof title === "string" ? translate(title, { _: title }) : title;
+  const resolvedTitle = typeof title === "string" ? translate(title, { _: title }) : title;
   const resolvedMessage =
     typeof message === "string" ? translate(message, { _: message }) : message;
 

@@ -43,9 +43,7 @@ export const ArrayField = <RecordType extends RaRecord = RaRecord>(
   const data = useFieldValue(props) || emptyArray;
   const listContext = useList({ data, resource, perPage, sort, filter });
 
-  return (
-    <ListContextProvider value={listContext}>{children}</ListContextProvider>
-  );
+  return <ListContextProvider value={listContext}>{children}</ListContextProvider>;
 };
 export type ArrayFieldProps<
   RecordType extends RaRecord = RaRecord,

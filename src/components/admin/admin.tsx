@@ -25,9 +25,7 @@ const defaultStore = localStorageStore();
  *
  * @internal
  */
-const AdminContext = (props: CoreAdminContextProps) => (
-  <CoreAdminContext {...props} />
-);
+const AdminContext = (props: CoreAdminContextProps) => <CoreAdminContext {...props} />;
 
 /**
  * UI component for the Admin application.
@@ -38,7 +36,7 @@ const AdminContext = (props: CoreAdminContextProps) => (
  * @internal
  */
 const AdminUI = (props: CoreAdminUIProps) => {
-  const { disableTelemetry = false, ...rest } = props;
+  const { disableTelemetry = true, ...rest } = props;
 
   useEffect(() => {
     if (

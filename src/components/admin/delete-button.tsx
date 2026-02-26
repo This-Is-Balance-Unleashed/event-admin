@@ -21,13 +21,7 @@ export type DeleteButtonProps = {
   resource?: string;
   successMessage?: string;
   className?: string;
-  variant?:
-    | "default"
-    | "destructive"
-    | "outline"
-    | "secondary"
-    | "ghost"
-    | "link";
+  variant?: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link";
 };
 
 /**

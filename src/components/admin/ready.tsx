@@ -1,9 +1,4 @@
-import {
-  ScanFace,
-  BookOpenText,
-  ChevronsLeftRight,
-  Github,
-} from "lucide-react";
+import { ScanFace, BookOpenText, ChevronsLeftRight, Github } from "lucide-react";
 
 /**
  * Splash screen displayed when no resources are configured yet.
@@ -18,8 +13,7 @@ export const Ready = () => (
     <div
       className="flex-1 flex flex-col text-white text-center justify-center items-center"
       style={{
-        background:
-          "linear-gradient(135deg, #00023b 0%, #00023b 50%, #313264 100%)",
+        background: "linear-gradient(135deg, #00023b 0%, #00023b 50%, #313264 100%)",
       }}
     >
       <ScanFace className="w-32 h-32 mb-4" />
@@ -27,8 +21,7 @@ export const Ready = () => (
       <div className="text-lg opacity-75">
         Your application is properly configured.
         <br />
-        Now you can add a &lt;Resource&gt; as child of
-        &lt;Admin&gt;&lt;/Admin&gt;
+        Now you can add a &lt;Resource&gt; as child of &lt;Admin&gt;&lt;/Admin&gt;
       </div>
     </div>
     <div className="flex h-[20vh] bg-zinc-100 text-black items-center justify-evenly">

@@ -76,13 +76,9 @@ Here is an example showing how to use it:
 import { Admin } from "@/components/admin/admin";
 import jsonServerProvider from "ra-data-json-server";
 
-const dataProvider = jsonServerProvider(
-  "https://jsonplaceholder.typicode.com/",
-);
+const dataProvider = jsonServerProvider("https://jsonplaceholder.typicode.com/");
 
-export const App = () => (
-  <Admin dataProvider={dataProvider}>{/* Resources go here */}</Admin>
-);
+export const App = () => <Admin dataProvider={dataProvider}>{/* Resources go here */}</Admin>;
 ```
 
 ### Declare Resources
@@ -114,18 +110,11 @@ import { ListGuesser } from "@/components/admin/list-guesser";
 import { ShowGuesser } from "@/components/admin/show-guesser";
 import { EditGuesser } from "@/components/admin/edit-guesser";
 
-const dataProvider = jsonServerProvider(
-  "https://jsonplaceholder.typicode.com/",
-);
+const dataProvider = jsonServerProvider("https://jsonplaceholder.typicode.com/");
 
 export const App = () => (
   <Admin dataProvider={dataProvider}>
-    <Resource
-      name="posts"
-      list={ListGuesser}
-      edit={EditGuesser}
-      show={ShowGuesser}
-    />
+    <Resource name="posts" list={ListGuesser} edit={EditGuesser} show={ShowGuesser} />
   </Admin>
 );
 ```

@@ -1,12 +1,7 @@
 import * as React from "react";
 import type { InputProps } from "ra-core";
 import { useInput, FieldTitle, useEvent, useResourceContext } from "ra-core";
-import {
-  FormControl,
-  FormError,
-  FormField,
-  FormLabel,
-} from "@/components/admin/form";
+import { FormControl, FormError, FormField, FormLabel } from "@/components/admin/form";
 import { Input } from "@/components/ui/input";
 import { InputHelperText } from "@/components/admin/input-helper-text";
 import { cn } from "@/lib/utils";
@@ -132,34 +127,28 @@ export const DateInput = (props: DateInputProps) => {
 
   // Update the input text when the user types in the input.
   // Also, update the react-hook-form value if the input value is a valid date string.
-  const handleChange = useEvent(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      if (onChange) {
-        onChange(event);
-      }
-      if (
-        typeof event.target === "undefined" ||
-        typeof event.target.value === "undefined"
-      ) {
-        return;
-      }
-      const target = event.target;
-      const newValue = target.value;
-      const isNewValueValid =
-        newValue === "" ||
-        (target.valueAsDate != null &&
-          !isNaN(new Date(target.valueAsDate).getTime()));
+  const handleChange = useEvent((event: React.ChangeEvent<HTMLInputElement>) => {
+    if (onChange) {
+      onChange(event);
+    }
+    if (typeof event.target === "undefined" || typeof event.target.value === "undefined") {
+      return;
+    }
+    const target = event.target;
+    const newValue = target.value;
+    const isNewValueValid =
+      newValue === "" ||
+      (target.valueAsDate != null && !isNaN(new Date(target.valueAsDate).getTime()));
 
-      // Some browsers will return null for an invalid date
-      // so we only change react-hook-form value if it's not null.
-      // The input reset is handled in the onBlur event handler
-      if (newValue !== "" && newValue != null && isNewValueValid) {
-        field.onChange(newValue);
-        // Track the fact that the next react-hook-form state change was triggered by the input itself
-        wasLastChangedByInput.current = true;
-      }
-    },
-  );
+    // Some browsers will return null for an invalid date
+    // so we only change react-hook-form value if it's not null.
+    // The input reset is handled in the onBlur event handler
+    if (newValue !== "" && newValue != null && isNewValueValid) {
+      field.onChange(newValue);
+      // Track the fact that the next react-hook-form state change was triggered by the input itself
+      wasLastChangedByInput.current = true;
+    }
+  });
 
   const handleFocus = useEvent((event: React.FocusEvent<HTMLInputElement>) => {
     if (onFocus) {
@@ -209,12 +198,7 @@ export const DateInput = (props: DateInputProps) => {
     <FormField id={id} className={className} name={name}>
       {label !== false && (
         <FormLabel>
-          <FieldTitle
-            label={label}
-            source={source}
-            resource={resource}
-            isRequired={isRequired}
-          />
+          <FieldTitle label={label} source={source} resource={resource} isRequired={isRequired} />
         </FormLabel>
       )}
       <FormControl>

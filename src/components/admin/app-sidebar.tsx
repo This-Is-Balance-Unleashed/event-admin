@@ -10,7 +10,7 @@ import {
 import { tanStackRouterProvider } from "ra-router-tanstack";
 
 const { Link, useMatch } = tanStackRouterProvider;
-import { ScanLine } from "lucide-react";
+import { CreditCard, RefreshCw, ScanLine, ShieldCheck, TicketPlus } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -52,12 +52,9 @@ export function AppSidebar() {
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton
-              asChild
-              className="data-[slot=sidebar-menu-button]:!p-1.5"
-            >
+            <SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:p-1.5!">
               <Link to="/">
-                <Shell className="!size-5" />
+                <Shell className="size-5!" />
                 <span className="text-base font-semibold">Hit Refresh</span>
               </Link>
             </SidebarMenuButton>
@@ -68,19 +65,17 @@ export function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
-              {hasDashboard ? (
-                <DashboardMenuItem onClick={handleClick} />
-              ) : null}
+              {hasDashboard ? <DashboardMenuItem onClick={handleClick} /> : null}
               {Object.keys(resources)
                 .filter((name) => resources[name].hasList)
                 .map((name) => (
-                  <ResourceMenuItem
-                    key={name}
-                    name={name}
-                    onClick={handleClick}
-                  />
+                  <ResourceMenuItem key={name} name={name} onClick={handleClick} />
                 ))}
               <CheckInMenuItem onClick={handleClick} />
+              <CreateTicketsMenuItem onClick={handleClick} />
+              <PaymentsMenuItem onClick={handleClick} />
+              <AdminsMenuItem onClick={handleClick} />
+              <ReconciliationMenuItem onClick={handleClick} />
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -128,7 +123,7 @@ export const DashboardMenuItem = ({ onClick }: { onClick?: () => void }) => {
  * <ResourceMenuItem key={name} name="posts" onClick={handleClick} />
  */
 export const CheckInMenuItem = ({ onClick }: { onClick?: () => void }) => {
-  const match = useMatch({ path: '/admin/checkin', end: false })
+  const match = useMatch({ path: "/admin/checkin", end: false });
   return (
     <SidebarMenuItem>
       <SidebarMenuButton asChild isActive={!!match} className="text-primary font-medium">
@@ -138,16 +133,66 @@ export const CheckInMenuItem = ({ onClick }: { onClick?: () => void }) => {
         </Link>
       </SidebarMenuButton>
     </SidebarMenuItem>
-  )
-}
+  );
+};
 
-export const ResourceMenuItem = ({
-  name,
-  onClick,
-}: {
-  name: string;
-  onClick?: () => void;
-}) => {
+export const CreateTicketsMenuItem = ({ onClick }: { onClick?: () => void }) => {
+  const match = useMatch({ path: "/admin/ticket-create", end: false });
+  return (
+    <SidebarMenuItem>
+      <SidebarMenuButton asChild isActive={!!match}>
+        <Link to="/admin/ticket-create" onClick={onClick}>
+          <TicketPlus />
+          Create Tickets
+        </Link>
+      </SidebarMenuButton>
+    </SidebarMenuItem>
+  );
+};
+
+export const PaymentsMenuItem = ({ onClick }: { onClick?: () => void }) => {
+  const match = useMatch({ path: "/admin/payments", end: false });
+  return (
+    <SidebarMenuItem>
+      <SidebarMenuButton asChild isActive={!!match}>
+        <Link to="/admin/payments" onClick={onClick}>
+          <CreditCard />
+          Payments
+        </Link>
+      </SidebarMenuButton>
+    </SidebarMenuItem>
+  );
+};
+
+export const AdminsMenuItem = ({ onClick }: { onClick?: () => void }) => {
+  const match = useMatch({ path: "/admin/admins", end: false });
+  return (
+    <SidebarMenuItem>
+      <SidebarMenuButton asChild isActive={!!match}>
+        <Link to="/admin/admins" onClick={onClick}>
+          <ShieldCheck />
+          Admins
+        </Link>
+      </SidebarMenuButton>
+    </SidebarMenuItem>
+  );
+};
+
+export const ReconciliationMenuItem = ({ onClick }: { onClick?: () => void }) => {
+  const match = useMatch({ path: "/admin/reconciliation", end: false });
+  return (
+    <SidebarMenuItem>
+      <SidebarMenuButton asChild isActive={!!match}>
+        <Link to="/admin/reconciliation" onClick={onClick}>
+          <RefreshCw />
+          Reconciliation
+        </Link>
+      </SidebarMenuButton>
+    </SidebarMenuItem>
+  );
+};
+
+export const ResourceMenuItem = ({ name, onClick }: { name: string; onClick?: () => void }) => {
   const { canAccess, isPending } = useCanAccess({
     resource: name,
     action: "list",
@@ -171,11 +216,7 @@ export const ResourceMenuItem = ({
     <SidebarMenuItem>
       <SidebarMenuButton asChild isActive={!!match}>
         <Link to={to} state={{ _scrollToTop: true }} onClick={onClick}>
-          {resources[name].icon ? (
-            createElement(resources[name].icon)
-          ) : (
-            <List />
-          )}
+          {resources[name].icon ? createElement(resources[name].icon) : <List />}
           {getResourceLabel(name, 2)}
         </Link>
       </SidebarMenuButton>

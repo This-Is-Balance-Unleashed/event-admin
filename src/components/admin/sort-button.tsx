@@ -1,12 +1,7 @@
 import * as React from "react";
 import { memo } from "react";
 import { ArrowUpDown, ChevronDown } from "lucide-react";
-import {
-  shallowEqual,
-  useListSortContext,
-  useTranslate,
-  useTranslateLabel,
-} from "ra-core";
+import { shallowEqual, useListSortContext, useTranslate, useTranslateLabel } from "ra-core";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,12 +10,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 type ButtonProps = React.ComponentProps<typeof Button>;
 
@@ -91,12 +81,7 @@ const SortButtonComponent = (props: SortButtonProps) => {
           <Tooltip>
             <DropdownMenuTrigger asChild>
               <TooltipTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  aria-label={buttonLabel}
-                  {...rest}
-                >
+                <Button variant="outline" size="icon" aria-label={buttonLabel} {...rest}>
                   {icon}
                 </Button>
               </TooltipTrigger>
@@ -122,11 +107,7 @@ const SortButtonComponent = (props: SortButtonProps) => {
               resource,
               source: field,
             })}{" "}
-            {translate(
-              `ra.sort.${
-                sort.field === field ? inverseOrder(sort.order) : "ASC"
-              }`,
-            )}
+            {translate(`ra.sort.${sort.field === field ? inverseOrder(sort.order) : "ASC"}`)}
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>

@@ -21,9 +21,7 @@ export function InputHelperText({ helperText }: { helperText?: ReactNode }) {
 
   return (
     <FormDescription>
-      {typeof helperText === "string"
-        ? translate(helperText, { _: helperText })
-        : helperText}
+      {typeof helperText === "string" ? translate(helperText, { _: helperText }) : helperText}
     </FormDescription>
   );
 }

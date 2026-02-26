@@ -51,9 +51,7 @@ export const BulkDeleteButton = <
       className={cn("h-9", className)}
     >
       {icon}
-      <Translate i18nKey={label ?? "ra.action.delete"}>
-        {label ?? "Delete"}
-      </Translate>
+      <Translate i18nKey={label ?? "ra.action.delete"}>{label ?? "Delete"}</Translate>
     </Button>
   );
 };

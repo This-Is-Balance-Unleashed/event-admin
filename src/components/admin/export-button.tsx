@@ -46,33 +46,20 @@ export const ExportButton = (props: ExportButtonProps) => {
     meta,
     className = "cursor-pointer",
   } = props;
-  const {
-    getData,
-    total,
-    resource,
-    exporter: exporterFromContext,
-  } = useListContext();
+  const { getData, total, resource, exporter: exporterFromContext } = useListContext();
   const exporter = customExporter || exporterFromContext;
   const dataProvider = useDataProvider();
   const notify = useNotify();
   const handleClick = useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
       if (!getData) {
-        throw new Error(
-          "ListContext.getData must be defined to use ExportButton.",
-        );
+        throw new Error("ListContext.getData must be defined to use ExportButton.");
       }
 
       getData({ maxResults, meta })
         .then(
           (data) =>
-            exporter &&
-            exporter(
-              data,
-              fetchRelatedRecords(dataProvider),
-              dataProvider,
-              resource,
-            ),
+            exporter && exporter(data, fetchRelatedRecords(dataProvider), dataProvider, resource),
         )
         .catch((error) => {
           console.error(error);
@@ -82,25 +69,11 @@ export const ExportButton = (props: ExportButtonProps) => {
         onClick(event);
       }
     },
-    [
-      dataProvider,
-      exporter,
-      getData,
-      notify,
-      onClick,
-      resource,
-      maxResults,
-      meta,
-    ],
+    [dataProvider, exporter, getData, notify, onClick, resource, maxResults, meta],
   );
 
   return (
-    <Button
-      variant="outline"
-      onClick={handleClick}
-      disabled={total === 0}
-      className={className}
-    >
+    <Button variant="outline" onClick={handleClick} disabled={total === 0} className={className}>
       {icon}
       <Translate i18nKey={label}>Export</Translate>
     </Button>

@@ -1,8 +1,4 @@
-import {
-  RecordContextProvider,
-  RecordRepresentation,
-  useListContext,
-} from "ra-core";
+import { RecordContextProvider, RecordRepresentation, useListContext } from "ra-core";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
@@ -39,7 +35,7 @@ import { cn } from "@/lib/utils";
  * );
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const SingleFieldList = <RecordType = any,>({
+export const SingleFieldList = <RecordType = any>({
   children,
   render,
   className,
