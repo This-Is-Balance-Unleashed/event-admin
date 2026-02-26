@@ -14,8 +14,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { fetchReconciliationData, resolveTickets } from "@/lib/reconciliation";
-import type { AffectedTicket } from "@/lib/reconciliation";
+import {
+  fetchReconciliationData,
+  resolveTickets,
+  fetchUnprovisionedGroupBookings,
+  resolveGroupBookings,
+} from "@/lib/reconciliation";
+import type { AffectedTicket, UnprovisionedGroupBooking } from "@/lib/reconciliation";
 
 function formatAmount(kobo: number) {
   return `₦${(kobo / 100).toLocaleString("en-NG")}`;
@@ -75,6 +80,131 @@ function SelectAllCheckbox({
       className="h-4 w-4 cursor-pointer accent-primary"
       aria-label="Select all tickets"
     />
+  );
+}
+
+function GroupBookingsSkeleton() {
+  return (
+    <>
+      {Array.from({ length: 3 }).map((_, i) => (
+        <TableRow key={i}>
+          {Array.from({ length: 7 }).map((_, j) => (
+            <TableCell key={j}>
+              <Skeleton className="h-4 w-full" />
+            </TableCell>
+          ))}
+        </TableRow>
+      ))}
+    </>
+  );
+}
+
+function GroupBookingsSection() {
+  const notify = useNotify();
+  const queryClient = useQueryClient();
+
+  const {
+    data: groupBookings = [],
+    isLoading,
+    isError,
+    error,
+  } = useQuery<UnprovisionedGroupBooking[]>({
+    queryKey: ["unprovisioned-group-bookings"],
+    queryFn: () => fetchUnprovisionedGroupBookings(),
+    staleTime: 0,
+  });
+
+  const { mutate: resolve, isPending } = useMutation({
+    mutationFn: (groupBookingIds: string[]) => resolveGroupBookings({ data: { groupBookingIds } }),
+    onSuccess: (results) => {
+      queryClient.invalidateQueries({ queryKey: ["unprovisioned-group-bookings"] });
+      const totalCreated = results.reduce((sum, r) => sum + r.ticketsCreated, 0);
+      notify(`${totalCreated} ticket${totalCreated !== 1 ? "s" : ""} created`, {
+        type: "success",
+      });
+      const totalErrors = results.reduce((sum, r) => sum + r.errors.length, 0);
+      if (totalErrors > 0) {
+        notify(`${totalErrors} member${totalErrors !== 1 ? "s" : ""} failed to provision`, {
+          type: "warning",
+        });
+      }
+    },
+    onError: (err: Error) => {
+      notify(err.message, { type: "error" });
+    },
+  });
+
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="flex items-center gap-2">
+        <h2 className="text-lg font-semibold">Unprovisioned Group Bookings</h2>
+        {!isLoading && groupBookings.length > 0 && (
+          <span className="text-sm text-muted-foreground">
+            {groupBookings.length} booking{groupBookings.length !== 1 ? "s" : ""} need resolution
+          </span>
+        )}
+      </div>
+
+      {isError && (
+        <div className="flex items-center gap-2 text-red-600 text-sm bg-red-50 rounded-lg p-4 border border-red-200">
+          <AlertCircle className="size-4 shrink-0" />
+          <span>
+            Failed to load group bookings:{" "}
+            {error instanceof Error ? error.message : "Unknown error"}
+          </span>
+        </div>
+      )}
+
+      <div className="rounded-lg border overflow-hidden">
+        <Table>
+          <TableHeader>
+            <TableRow className="bg-muted/50">
+              <TableHead>Company</TableHead>
+              <TableHead>Contact Email</TableHead>
+              <TableHead>Reference</TableHead>
+              <TableHead>Amount (₦)</TableHead>
+              <TableHead>Members</TableHead>
+              <TableHead>Date</TableHead>
+              <TableHead className="w-24">Action</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {isLoading ? (
+              <GroupBookingsSkeleton />
+            ) : groupBookings.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={7} className="text-center text-muted-foreground py-12">
+                  No unprovisioned group bookings — all groups are reconciled!
+                </TableCell>
+              </TableRow>
+            ) : (
+              groupBookings.map((booking) => (
+                <TableRow key={booking.id}>
+                  <TableCell className="font-medium">{booking.company_name}</TableCell>
+                  <TableCell>{booking.primary_contact_email}</TableCell>
+                  <TableCell className="font-mono text-xs">{booking.paystack_reference}</TableCell>
+                  <TableCell>{formatAmount(booking.paystack_amount)}</TableCell>
+                  <TableCell>{booking.members.length}</TableCell>
+                  <TableCell className="text-muted-foreground text-sm">
+                    {formatDate(booking.paystack_date)}
+                  </TableCell>
+                  <TableCell>
+                    <Button
+                      variant="default"
+                      size="sm"
+                      disabled={isPending}
+                      onClick={() => resolve([booking.id])}
+                    >
+                      {isPending ? <Loader2 className="size-4 animate-spin" /> : "Resolve"}
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </div>
+    </div>
   );
 }
 
@@ -246,6 +376,10 @@ export function ReconciliationPage() {
             )}
           </TableBody>
         </Table>
+      </div>
+
+      <div className="border-t pt-6">
+        <GroupBookingsSection />
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
-import { useState, useCallback } from "react";
-import { supabaseClient } from "@/lib/supabase-provider";
+import { useState, useCallback, useRef } from "react";
+import { searchTickets, checkInTicket } from "@/lib/check-in";
+import type { CheckInTicket } from "@/lib/check-in";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,15 +9,7 @@ import { ScanLine, CheckCircle2, AlertCircle, Clock, XCircle, Search } from "luc
 import { TicketStatusBadge } from "@/components/admin/ticket-status-badge";
 import { QrScannerOverlay, ScanQrButton } from "@/components/admin/qr-scanner-overlay";
 
-type Ticket = {
-  id: string;
-  name: string | null;
-  email: string;
-  status: "reserved" | "paid" | "failed" | "used";
-  price_paid: number;
-  checked_in_at: string | null;
-  ticket_types: { name: string } | null;
-};
+type Ticket = CheckInTicket;
 
 const STATUS_ICON = {
   paid: <CheckCircle2 className="size-5 text-green-500" />,
@@ -91,6 +84,7 @@ export function CheckInForm() {
   const [success, setSuccess] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [scannerOpen, setScannerOpen] = useState(false);
+  const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const search = useCallback(async (q: string) => {
     if (!q.trim() || q.trim().length < 2) {
@@ -100,30 +94,21 @@ export function CheckInForm() {
     setSearching(true);
     setError(null);
     setSuccess(null);
-    const { data, error: err } = await supabaseClient
-      .from("tickets")
-      .select("id, name, email, status, price_paid, checked_in_at, ticket_types(name)")
-      .or(`ticket_secret.eq.${q.trim()},email.ilike.%${q.trim()}%,name.ilike.%${q.trim()}%`)
-      .limit(10);
-    setSearching(false);
-    if (err) {
-      setError("Search failed: " + err.message);
-      return;
+    try {
+      const tickets = await searchTickets({ data: { query: q } });
+      setResults(tickets);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Search failed");
+    } finally {
+      setSearching(false);
     }
-    setResults(data as Ticket[]);
   }, []);
 
-  const debouncedSearch = useCallback(
-    (q: string) => {
-      const timer = setTimeout(() => search(q), 300);
-      return () => clearTimeout(timer);
-    },
-    [search],
-  );
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setQuery(e.target.value);
-    debouncedSearch(e.target.value);
+    const q = e.target.value;
+    setQuery(q);
+    if (debounceTimer.current) clearTimeout(debounceTimer.current);
+    debounceTimer.current = setTimeout(() => search(q), 300);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -142,17 +127,15 @@ export function CheckInForm() {
   const handleCheckIn = async (id: string) => {
     setCheckingIn(id);
     setError(null);
-    const { error: err } = await supabaseClient
-      .from("tickets")
-      .update({ status: "used", checked_in_at: new Date().toISOString() })
-      .eq("id", id);
-    setCheckingIn(null);
-    if (err) {
-      setError("Check-in failed: " + err.message);
-      return;
+    try {
+      await checkInTicket({ data: { id } });
+      setSuccess("Checked in successfully!");
+      await search(query);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Check-in failed");
+    } finally {
+      setCheckingIn(null);
     }
-    setSuccess("Checked in successfully!");
-    await search(query);
   };
 
   return (
@@ -164,6 +147,7 @@ export function CheckInForm() {
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
           <Input
+            autoFocus
             className="pl-9 h-12 text-base"
             placeholder="Search by name, email or QR code…"
             value={query}
@@ -210,13 +194,4 @@ export function CheckInForm() {
       )}
     </div>
   );
-}
-
-// Inline debounce utility (avoids extra dep)
-function debounce<T extends unknown[]>(fn: (...args: T) => void, ms: number) {
-  let timer: ReturnType<typeof setTimeout>;
-  return (...args: T) => {
-    clearTimeout(timer);
-    timer = setTimeout(() => fn(...args), ms);
-  };
 }

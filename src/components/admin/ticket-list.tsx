@@ -15,8 +15,8 @@ const statusChoices = [
 ];
 
 const listFilters = [
-  <SearchInput source="email" key="email" alwaysOn />,
-  <SearchInput source="name" key="name" />,
+  <SearchInput source="email@ilike" key="email" alwaysOn />,
+  <SearchInput source="name@ilike" key="name" />,
   <SelectInput source="status" choices={statusChoices} key="status" />,
 ];
 
