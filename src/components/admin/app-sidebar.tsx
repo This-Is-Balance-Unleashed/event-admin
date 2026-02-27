@@ -10,7 +10,7 @@ import {
 import { tanStackRouterProvider } from "ra-router-tanstack";
 
 const { Link, useMatch } = tanStackRouterProvider;
-import { CalendarPlus, CreditCard, RefreshCw, ScanLine, ShieldCheck, TicketPlus } from "lucide-react";
+import { CalendarPlus, CreditCard, MailPlus, RefreshCw, ScanLine, ShieldCheck, TicketPlus } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -72,6 +72,7 @@ export function AppSidebar() {
                   <ResourceMenuItem key={name} name={name} onClick={handleClick} />
                 ))}
               <CreateEventMenuItem onClick={handleClick} />
+              <SendEmailMenuItem onClick={handleClick} />
               <CheckInMenuItem onClick={handleClick} />
               <CreateTicketsMenuItem onClick={handleClick} />
               <PaymentsMenuItem onClick={handleClick} />
@@ -121,6 +122,20 @@ export const CreateEventMenuItem = ({ onClick }: { onClick?: () => void }) => {
         <Link to="/admin/event-create" onClick={onClick}>
           <CalendarPlus />
           Create Event
+        </Link>
+      </SidebarMenuButton>
+    </SidebarMenuItem>
+  );
+};
+
+export const SendEmailMenuItem = ({ onClick }: { onClick?: () => void }) => {
+  const match = useMatch({ path: "/admin/email", end: false });
+  return (
+    <SidebarMenuItem>
+      <SidebarMenuButton asChild isActive={!!match}>
+        <Link to="/admin/email" onClick={onClick}>
+          <MailPlus />
+          Send Emails
         </Link>
       </SidebarMenuButton>
     </SidebarMenuItem>

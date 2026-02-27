@@ -26,6 +26,7 @@ import { GroupBookingList } from "@/components/admin/group-booking-list";
 import { GroupBookingShow } from "@/components/admin/group-booking-show";
 import { GroupBookingEdit } from "@/components/admin/group-booking-edit";
 import { GroupMemberEdit } from "@/components/admin/group-member-edit";
+import { EmailPage } from "@/components/admin/email-page";
 
 export const Route = createFileRoute("/admin/$")({
   component: AdminApp,
@@ -96,6 +97,7 @@ function AdminApp() {
         <RouterRoute path="/reconciliation" element={<ReconciliationPage />} />
         <RouterRoute path="/ticket-create" element={<TicketCreatePage />} />
         <RouterRoute path="/event-create" element={<EventCreatePage />} />
+        <RouterRoute path="/email" element={<EmailPage />} />
       </CustomRoutes>
     </Admin>
   );

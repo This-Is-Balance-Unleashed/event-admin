@@ -8,7 +8,10 @@ import { ReferenceField } from "@/components/admin/reference-field";
 import { TextField } from "@/components/admin/text-field";
 import { Button } from "@/components/ui/button";
 import { TicketStatusBadge } from "@/components/admin/ticket-status-badge";
-import { ScanLine, CheckCircle2, AlertCircle } from "lucide-react";
+import { ScanLine, CheckCircle2, AlertCircle, Mail } from "lucide-react";
+import { tanStackRouterProvider } from "ra-router-tanstack";
+
+const { Link } = tanStackRouterProvider;
 
 function CheckInButton() {
   const record = useRecordContext();
@@ -87,6 +90,19 @@ function TicketQRCode() {
   );
 }
 
+function SendEmailButton() {
+  const record = useRecordContext();
+  if (!record?.email) return null;
+  return (
+    <Button variant="outline" size="sm" className="gap-2" asChild>
+      <Link to="/admin/email" search={`?email=${encodeURIComponent(record.email)}`}>
+        <Mail className="size-4" />
+        Send Email
+      </Link>
+    </Button>
+  );
+}
+
 export function TicketShow() {
   return (
     <Show>
@@ -116,8 +132,9 @@ export function TicketShow() {
         <RecordField source="ticket_secret" label="QR Code">
           <TicketQRCode />
         </RecordField>
-        <div className="pt-4">
+        <div className="pt-4 flex gap-3 flex-wrap">
           <CheckInButton />
+          <SendEmailButton />
         </div>
       </div>
     </Show>
