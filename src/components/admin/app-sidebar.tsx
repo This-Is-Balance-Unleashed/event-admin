@@ -10,7 +10,15 @@ import {
 import { tanStackRouterProvider } from "ra-router-tanstack";
 
 const { Link, useMatch } = tanStackRouterProvider;
-import { CreditCard, RefreshCw, ScanLine, ShieldCheck, TicketPlus } from "lucide-react";
+import {
+  CalendarPlus,
+  CreditCard,
+  MailPlus,
+  RefreshCw,
+  ScanLine,
+  ShieldCheck,
+  TicketPlus,
+} from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -71,6 +79,8 @@ export function AppSidebar() {
                 .map((name) => (
                   <ResourceMenuItem key={name} name={name} onClick={handleClick} />
                 ))}
+              <CreateEventMenuItem onClick={handleClick} />
+              <SendEmailMenuItem onClick={handleClick} />
               <CheckInMenuItem onClick={handleClick} />
               <CreateTicketsMenuItem onClick={handleClick} />
               <PaymentsMenuItem onClick={handleClick} />
@@ -112,16 +122,34 @@ export const DashboardMenuItem = ({ onClick }: { onClick?: () => void }) => {
   );
 };
 
-/**
- * Menu item for a resource link in the sidebar.
- *
- * This component renders a sidebar menu item that links to a resource's list view.
- * It checks permissions using canAccess and displays as active when the user is viewing that resource.
- * The component icon and label are derived from the resource definition.
- *
- * @example
- * <ResourceMenuItem key={name} name="posts" onClick={handleClick} />
- */
+export const CreateEventMenuItem = ({ onClick }: { onClick?: () => void }) => {
+  const match = useMatch({ path: "/admin/event-create", end: false });
+  return (
+    <SidebarMenuItem>
+      <SidebarMenuButton asChild isActive={!!match}>
+        <Link to="/admin/event-create" onClick={onClick}>
+          <CalendarPlus />
+          Create Event
+        </Link>
+      </SidebarMenuButton>
+    </SidebarMenuItem>
+  );
+};
+
+export const SendEmailMenuItem = ({ onClick }: { onClick?: () => void }) => {
+  const match = useMatch({ path: "/admin/email", end: false });
+  return (
+    <SidebarMenuItem>
+      <SidebarMenuButton asChild isActive={!!match}>
+        <Link to="/admin/email" onClick={onClick}>
+          <MailPlus />
+          Send Emails
+        </Link>
+      </SidebarMenuButton>
+    </SidebarMenuItem>
+  );
+};
+
 export const CheckInMenuItem = ({ onClick }: { onClick?: () => void }) => {
   const match = useMatch({ path: "/admin/checkin", end: false });
   return (

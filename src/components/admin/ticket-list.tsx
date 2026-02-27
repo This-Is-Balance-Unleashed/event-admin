@@ -1,4 +1,6 @@
+import { useState } from "react";
 import { useRecordContext } from "ra-core";
+import { Copy, Check } from "lucide-react";
 import { List } from "@/components/admin/list";
 import { DataTable } from "@/components/admin/data-table";
 import { DateField } from "@/components/admin/date-field";
@@ -26,6 +28,41 @@ function StatusCell() {
   return <TicketStatusBadge status={record.status} />;
 }
 
+function QrUrlCell() {
+  const record = useRecordContext();
+  const [copied, setCopied] = useState(false);
+  if (!record?.qr_code_url) return <span className="text-muted-foreground text-xs">—</span>;
+
+  const copy = () => {
+    navigator.clipboard.writeText(record.qr_code_url);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1500);
+  };
+
+  return (
+    <div className="flex items-center gap-1.5">
+      <a
+        href={record.qr_code_url}
+        target="_blank"
+        rel="noreferrer"
+        className="text-xs text-primary underline-offset-2 hover:underline truncate max-w-32"
+      >
+        QR Code
+      </a>
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          copy();
+        }}
+        className="text-muted-foreground hover:text-foreground transition-colors"
+        aria-label="Copy QR code URL"
+      >
+        {copied ? <Check className="size-3.5 text-green-500" /> : <Copy className="size-3.5" />}
+      </button>
+    </div>
+  );
+}
+
 function PriceCell() {
   const record = useRecordContext();
   if (!record) return null;
@@ -49,6 +86,9 @@ export function TicketList() {
         </DataTable.Col>
         <DataTable.Col source="checked_in_at" label="Checked In">
           <DateField source="checked_in_at" showTime emptyText="—" />
+        </DataTable.Col>
+        <DataTable.Col source="qr_code_url" label="QR">
+          <QrUrlCell />
         </DataTable.Col>
         <DataTable.Col label="">
           <ShowButton />
