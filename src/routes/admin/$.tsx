@@ -15,6 +15,7 @@ import { PaymentsPage } from "@/components/admin/payments-page";
 import { TicketCreatePage } from "@/components/admin/ticket-create-page";
 import { AdminsPage } from "@/components/admin/admins-page";
 import { ReconciliationPage } from "@/components/admin/reconciliation-page";
+import { EventCreatePage } from "@/components/admin/event-create-page";
 import { EventList } from "@/components/admin/event-list";
 import { EventShow } from "@/components/admin/event-show";
 import { EventEdit } from "@/components/admin/event-edit";
@@ -94,6 +95,7 @@ function AdminApp() {
         <RouterRoute path="/admins" element={<AdminsPage />} />
         <RouterRoute path="/reconciliation" element={<ReconciliationPage />} />
         <RouterRoute path="/ticket-create" element={<TicketCreatePage />} />
+        <RouterRoute path="/event-create" element={<EventCreatePage />} />
       </CustomRoutes>
     </Admin>
   );

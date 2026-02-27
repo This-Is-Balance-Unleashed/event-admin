@@ -10,7 +10,7 @@ import {
 import { tanStackRouterProvider } from "ra-router-tanstack";
 
 const { Link, useMatch } = tanStackRouterProvider;
-import { CreditCard, RefreshCw, ScanLine, ShieldCheck, TicketPlus } from "lucide-react";
+import { CalendarPlus, CreditCard, RefreshCw, ScanLine, ShieldCheck, TicketPlus } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -71,6 +71,7 @@ export function AppSidebar() {
                 .map((name) => (
                   <ResourceMenuItem key={name} name={name} onClick={handleClick} />
                 ))}
+              <CreateEventMenuItem onClick={handleClick} />
               <CheckInMenuItem onClick={handleClick} />
               <CreateTicketsMenuItem onClick={handleClick} />
               <PaymentsMenuItem onClick={handleClick} />
@@ -122,6 +123,20 @@ export const DashboardMenuItem = ({ onClick }: { onClick?: () => void }) => {
  * @example
  * <ResourceMenuItem key={name} name="posts" onClick={handleClick} />
  */
+export const CreateEventMenuItem = ({ onClick }: { onClick?: () => void }) => {
+  const match = useMatch({ path: "/admin/event-create", end: false });
+  return (
+    <SidebarMenuItem>
+      <SidebarMenuButton asChild isActive={!!match}>
+        <Link to="/admin/event-create" onClick={onClick}>
+          <CalendarPlus />
+          Create Event
+        </Link>
+      </SidebarMenuButton>
+    </SidebarMenuItem>
+  );
+};
+
 export const CheckInMenuItem = ({ onClick }: { onClick?: () => void }) => {
   const match = useMatch({ path: "/admin/checkin", end: false });
   return (
