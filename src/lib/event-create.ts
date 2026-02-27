@@ -29,6 +29,7 @@ export async function createEventWithTicketTypesHandler(
   eventData: EventCreateData,
   ticketTypes: TicketTypeInput[],
 ): Promise<{ eventId: string }> {
+  if (ticketTypes.length === 0) throw new Error("At least one ticket type is required");
   // 1. Insert event
   const { data: event, error: eventError } = await supabaseClient
     .from("events")
@@ -45,7 +46,7 @@ export async function createEventWithTicketTypesHandler(
 
   if (eventError || !event) throw new Error(toMessage(eventError) || "Event insert failed");
 
-  const eventId = event.id as string;
+  const eventId = event.id;
 
   // 2. Insert ticket types linked to new event
   const { error: typesError } = await supabaseClient
@@ -64,8 +65,9 @@ export async function createEventWithTicketTypesHandler(
 
   if (typesError) {
     // Rollback: delete the event
-    await supabaseClient.from("events").delete().eq("id", eventId);
-    throw new Error(toMessage(typesError));
+    const { error: rollbackError } = await supabaseClient.from("events").delete().eq("id", eventId);
+    const rollbackNote = rollbackError ? ` (rollback also failed: ${toMessage(rollbackError)})` : "";
+    throw new Error(toMessage(typesError) + rollbackNote);
   }
 
   return { eventId };
