@@ -101,7 +101,7 @@ export async function sendTicketEmailsHandler(input: SendEmailInput): Promise<Se
     };
   }
 
-  const sentCount = (data ?? []).length;
+  const sentCount = (data?.data ?? []).length;
   return { sent: sentCount, failed: [] };
 }
 

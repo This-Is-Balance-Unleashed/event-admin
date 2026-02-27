@@ -29,6 +29,7 @@ import { Resend } from "resend";
 
 beforeEach(() => {
   vi.clearAllMocks();
+  process.env.RESEND_API_KEY = "test-key";
 
   ticketsChain = {
     select: vi.fn().mockReturnThis(),
@@ -106,7 +107,7 @@ describe("sendTicketEmailsHandler", () => {
   };
 
   it("calls Resend batch.send with one email per recipient", async () => {
-    mockBatchSend.mockResolvedValueOnce({ data: [{ id: "msg1" }], error: null });
+    mockBatchSend.mockResolvedValueOnce({ data: { data: [{ id: "msg1" }] }, error: null });
 
     const result = await sendTicketEmailsHandler({
       recipients,

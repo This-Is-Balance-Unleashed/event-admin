@@ -68,7 +68,7 @@ export function EmailPage() {
   // Load all tickets once — filter client-side to avoid server param serialisation issues
   useEffect(() => {
     setLoading(true);
-    fetchEmailTickets({})
+    fetchEmailTickets({ data: {} })
       .then((data) => {
         const rows = Array.isArray(data) ? data : [];
         setTickets(rows);
@@ -176,17 +176,19 @@ export function EmailPage() {
     setSending(true);
     try {
       const result = await sendTicketEmails({
-        recipients: allRecipients.map((r) => ({
-          email: r.email,
-          name: r.name,
-          ticketTypeName: r.ticketTypeName,
-          pricePaid: r.pricePaid,
-          reference: r.reference,
-          qrCodeUrl: r.qrCodeUrl,
-        })),
-        subject,
-        message,
-        includeFields,
+        data: {
+          recipients: allRecipients.map((r) => ({
+            email: r.email,
+            name: r.name,
+            ticketTypeName: r.ticketTypeName,
+            pricePaid: r.pricePaid,
+            reference: r.reference,
+            qrCodeUrl: r.qrCodeUrl,
+          })),
+          subject,
+          message,
+          includeFields,
+        },
       });
       if (result.failed.length > 0) {
         notify(
@@ -198,8 +200,9 @@ export function EmailPage() {
           type: "success",
         });
       }
-    } catch {
-      notify("Send failed — check server logs", { type: "error" });
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e);
+      notify(`Send failed: ${msg}`, { type: "error", autoHideDuration: 10000 });
     } finally {
       setSending(false);
     }
