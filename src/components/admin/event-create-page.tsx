@@ -9,7 +9,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   createEventWithTicketTypes,
-  type EventCreateData,
   type TicketTypeInput,
 } from "@/lib/event-create";
 
