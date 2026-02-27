@@ -10,7 +10,13 @@ import { TextField } from "@/components/admin/text-field";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { TicketStatusBadge } from "@/components/admin/ticket-status-badge";
 import { ScanLine, CheckCircle2, AlertCircle, Mail } from "lucide-react";
 import { tanStackRouterProvider } from "ra-router-tanstack";
@@ -133,7 +139,11 @@ function EditTicketSection() {
     setSaving(true);
     try {
       await updateTicket({
-        data: { id: String(record.id), name: name || undefined, ticketTypeId: ticketTypeId || undefined },
+        data: {
+          id: String(record.id),
+          name: name || undefined,
+          ticketTypeId: ticketTypeId || undefined,
+        },
       });
       notify("Ticket updated", { type: "success" });
       refresh();

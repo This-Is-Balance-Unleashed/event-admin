@@ -45,7 +45,16 @@ beforeEach(() => {
 describe("fetchEditableTicketsHandler", () => {
   it("returns tickets with ticket type names merged", async () => {
     ticketsChain.order.mockResolvedValueOnce({
-      data: [{ id: "t1", email: "a@b.com", name: "Alice", status: "paid", ticket_type_id: "tt1", paystack_reference: "PSK-1" }],
+      data: [
+        {
+          id: "t1",
+          email: "a@b.com",
+          name: "Alice",
+          status: "paid",
+          ticket_type_id: "tt1",
+          paystack_reference: "PSK-1",
+        },
+      ],
       error: null,
     });
 
@@ -57,8 +66,22 @@ describe("fetchEditableTicketsHandler", () => {
   it("excludes test_ tickets client-side", async () => {
     ticketsChain.order.mockResolvedValueOnce({
       data: [
-        { id: "t1", email: "a@b.com", name: "Alice", status: "paid", ticket_type_id: "tt1", paystack_reference: "PSK-REAL" },
-        { id: "t2", email: "b@b.com", name: "Bot", status: "paid", ticket_type_id: "tt1", paystack_reference: "test_abc" },
+        {
+          id: "t1",
+          email: "a@b.com",
+          name: "Alice",
+          status: "paid",
+          ticket_type_id: "tt1",
+          paystack_reference: "PSK-REAL",
+        },
+        {
+          id: "t2",
+          email: "b@b.com",
+          name: "Bot",
+          status: "paid",
+          ticket_type_id: "tt1",
+          paystack_reference: "test_abc",
+        },
       ],
       error: null,
     });
@@ -84,7 +107,9 @@ describe("updateTicketHandler", () => {
   it("updates ticket_type_id when ticketTypeId provided", async () => {
     ticketsChain.eq.mockResolvedValueOnce({ error: null });
     await updateTicketHandler({ id: "t1", ticketTypeId: "tt2" });
-    expect(ticketsChain.update).toHaveBeenCalledWith(expect.objectContaining({ ticket_type_id: "tt2" }));
+    expect(ticketsChain.update).toHaveBeenCalledWith(
+      expect.objectContaining({ ticket_type_id: "tt2" }),
+    );
   });
 
   it("no-ops when no fields given", async () => {
@@ -113,6 +138,8 @@ describe("bulkUpdateTicketTypeHandler", () => {
 
   it("throws on supabase error", async () => {
     ticketsChain.in.mockResolvedValueOnce({ error: { message: "Bulk update failed" } });
-    await expect(bulkUpdateTicketTypeHandler({ ids: ["t1"], ticketTypeId: "tt2" })).rejects.toThrow("Bulk update failed");
+    await expect(bulkUpdateTicketTypeHandler({ ids: ["t1"], ticketTypeId: "tt2" })).rejects.toThrow(
+      "Bulk update failed",
+    );
   });
 });

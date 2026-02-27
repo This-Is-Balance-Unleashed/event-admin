@@ -44,8 +44,7 @@ const DEFAULT_FIELDS: IncludeFields = {
   reference: false,
 };
 
-const ZOOM_URL =
-  "https://zoom.us/j/99036993644?pwd=wrENKh7Ii7wOsP3U5dtJYxSKpV7hrc.1";
+const ZOOM_URL = "https://zoom.us/j/99036993644?pwd=wrENKh7Ii7wOsP3U5dtJYxSKpV7hrc.1";
 
 type EmailTemplateConfig = {
   key: string;

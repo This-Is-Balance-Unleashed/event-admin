@@ -20,9 +20,7 @@ export async function fetchEditableTicketsHandler(): Promise<EditableTicket[]> {
 
   if (error || !data) throw new Error(error?.message ?? "Failed to load tickets");
 
-  const realData = data.filter(
-    (row) => !row.paystack_reference?.toLowerCase().startsWith("test_"),
-  );
+  const realData = data.filter((row) => !row.paystack_reference?.toLowerCase().startsWith("test_"));
 
   const { data: types } = await supabaseClient.from("ticket_types").select("id, name");
   const typeMap = new Map((types ?? []).map((t) => [t.id, t.name as string]));
@@ -69,9 +67,7 @@ export const fetchEditableTickets = createServerFn({ method: "POST" }).handler((
 );
 
 export const updateTicket = createServerFn({ method: "POST" })
-  .inputValidator(
-    (input: { id: string; name?: string; ticketTypeId?: string }) => input,
-  )
+  .inputValidator((input: { id: string; name?: string; ticketTypeId?: string }) => input)
   .handler(({ data }) => updateTicketHandler(data));
 
 export const bulkUpdateTicketType = createServerFn({ method: "POST" })

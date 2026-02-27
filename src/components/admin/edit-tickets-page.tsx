@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNotify } from "ra-core";
-import { Pencil, Check, X } from "lucide-react";
+import { Pencil, Check, X, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -75,7 +75,10 @@ function InlineNameEdit({
       <button onClick={save} disabled={saving} className="text-green-600 hover:text-green-700">
         <Check className="size-3.5" />
       </button>
-      <button onClick={() => setEditing(false)} className="text-muted-foreground hover:text-foreground">
+      <button
+        onClick={() => setEditing(false)}
+        className="text-muted-foreground hover:text-foreground"
+      >
         <X className="size-3.5" />
       </button>
     </div>
@@ -87,32 +90,45 @@ export function EditTicketsPage() {
   const [tickets, setTickets] = useState<EditableTicket[]>([]);
   const [ticketTypes, setTicketTypes] = useState<TicketType[]>([]);
   const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [moveToTypeId, setMoveToTypeId] = useState("");
   const [applying, setApplying] = useState(false);
 
+  const visibleTickets = tickets.filter((t) => {
+    const q = search.toLowerCase();
+    return !q || t.email.toLowerCase().includes(q) || (t.name ?? "").toLowerCase().includes(q);
+  });
+
   useEffect(() => {
     setLoading(true);
-    Promise.all([
-      fetchEditableTickets({ data: {} }),
-      fetchTicketTypes(),
-    ])
+    Promise.all([fetchEditableTickets({ data: {} }), fetchTicketTypes()])
       .then(([t, types]) => {
         setTickets(Array.isArray(t) ? t : []);
         setTicketTypes(Array.isArray(types) ? types : []);
       })
-      .catch((e) => notify(`Failed to load: ${e instanceof Error ? e.message : String(e)}`, { type: "error" }))
+      .catch((e) =>
+        notify(`Failed to load: ${e instanceof Error ? e.message : String(e)}`, { type: "error" }),
+      )
       .finally(() => setLoading(false));
   }, []);
 
   const allSelected =
-    tickets.length > 0 && tickets.every((t) => selectedIds.has(t.id));
+    visibleTickets.length > 0 && visibleTickets.every((t) => selectedIds.has(t.id));
 
   const toggleAll = () => {
     if (allSelected) {
-      setSelectedIds(new Set());
+      setSelectedIds((prev) => {
+        const next = new Set(prev);
+        visibleTickets.forEach((t) => next.delete(t.id));
+        return next;
+      });
     } else {
-      setSelectedIds(new Set(tickets.map((t) => t.id)));
+      setSelectedIds((prev) => {
+        const next = new Set(prev);
+        visibleTickets.forEach((t) => next.add(t.id));
+        return next;
+      });
     }
   };
 
@@ -143,9 +159,12 @@ export function EditTicketsPage() {
             : t,
         ),
       );
-      notify(`Moved ${selectedIds.size} ticket${selectedIds.size !== 1 ? "s" : ""} to ${typeName}`, {
-        type: "success",
-      });
+      notify(
+        `Moved ${selectedIds.size} ticket${selectedIds.size !== 1 ? "s" : ""} to ${typeName}`,
+        {
+          type: "success",
+        },
+      );
       setSelectedIds(new Set());
       setMoveToTypeId("");
     } catch (e) {
@@ -160,6 +179,16 @@ export function EditTicketsPage() {
       <div className="mb-6 flex items-center gap-3">
         <Pencil className="size-5 text-primary" />
         <h1 className="text-2xl font-semibold">Edit Tickets</h1>
+      </div>
+
+      <div className="mb-3 relative">
+        <Search className="absolute left-2.5 top-2.5 size-3.5 text-muted-foreground" />
+        <Input
+          placeholder="Search by name or email…"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="pl-8 h-8 text-sm"
+        />
       </div>
 
       <div className="rounded-lg border bg-card overflow-auto">
@@ -186,14 +215,14 @@ export function EditTicketsPage() {
                   Loading…
                 </td>
               </tr>
-            ) : tickets.length === 0 ? (
+            ) : visibleTickets.length === 0 ? (
               <tr>
                 <td colSpan={5} className="p-6 text-center text-muted-foreground text-xs">
-                  No tickets found
+                  {tickets.length === 0 ? "No tickets found" : "No tickets match your search"}
                 </td>
               </tr>
             ) : (
-              tickets.map((t) => (
+              visibleTickets.map((t) => (
                 <tr
                   key={t.id}
                   className="border-t hover:bg-muted/30 transition-colors"
@@ -226,9 +255,7 @@ export function EditTicketsPage() {
       {/* Sticky action bar */}
       {selectedIds.size > 0 && (
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-3 bg-background border shadow-lg rounded-lg px-4 py-3">
-          <span className="text-sm font-medium">
-            {selectedIds.size} selected
-          </span>
+          <span className="text-sm font-medium">{selectedIds.size} selected</span>
           <span className="text-muted-foreground text-sm">Move to:</span>
           <Select value={moveToTypeId} onValueChange={setMoveToTypeId}>
             <SelectTrigger className="w-36 h-8 text-sm">
@@ -242,18 +269,10 @@ export function EditTicketsPage() {
               ))}
             </SelectContent>
           </Select>
-          <Button
-            size="sm"
-            onClick={handleApply}
-            disabled={!moveToTypeId || applying}
-          >
+          <Button size="sm" onClick={handleApply} disabled={!moveToTypeId || applying}>
             {applying ? "Applying…" : "Apply"}
           </Button>
-          <Button
-            size="sm"
-            variant="ghost"
-            onClick={() => setSelectedIds(new Set())}
-          >
+          <Button size="sm" variant="ghost" onClick={() => setSelectedIds(new Set())}>
             Clear
           </Button>
         </div>
