@@ -10,7 +10,15 @@ import {
 import { tanStackRouterProvider } from "ra-router-tanstack";
 
 const { Link, useMatch } = tanStackRouterProvider;
-import { CalendarPlus, CreditCard, MailPlus, RefreshCw, ScanLine, ShieldCheck, TicketPlus } from "lucide-react";
+import {
+  CalendarPlus,
+  CreditCard,
+  MailPlus,
+  RefreshCw,
+  ScanLine,
+  ShieldCheck,
+  TicketPlus,
+} from "lucide-react";
 import {
   Sidebar,
   SidebarContent,

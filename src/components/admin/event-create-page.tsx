@@ -1,24 +1,29 @@
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useNotify, useRedirect } from "ra-core";
-import { CalendarPlus, Loader2, Trash2, Plus, AlertCircle, ChevronRight, ChevronLeft } from "lucide-react";
+import {
+  CalendarPlus,
+  Loader2,
+  Trash2,
+  Plus,
+  AlertCircle,
+  ChevronRight,
+  ChevronLeft,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  createEventWithTicketTypes,
-  type TicketTypeInput,
-} from "@/lib/event-create";
+import { createEventWithTicketTypes, type TicketTypeInput } from "@/lib/event-create";
 
 // ─── Default tiers ─────────────────────────────────────────────────────────
 
 const DEFAULT_TIERS: TicketTypeInput[] = [
-  { name: "General",   price_in_kobo: 1_000_000, max_quantity: null, is_available: true },
-  { name: "VIP",       price_in_kobo: 1_800_000, max_quantity: null, is_available: true },
+  { name: "General", price_in_kobo: 1_000_000, max_quantity: null, is_available: true },
+  { name: "VIP", price_in_kobo: 1_800_000, max_quantity: null, is_available: true },
   { name: "Corporate", price_in_kobo: 7_000_000, max_quantity: null, is_available: true },
-  { name: "Virtual",   price_in_kobo:   650_000, max_quantity: null, is_available: true },
+  { name: "Virtual", price_in_kobo: 650_000, max_quantity: null, is_available: true },
 ];
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -135,7 +140,9 @@ function EventDetailsStep({
             placeholder="0"
           />
           {form.price_in_kobo && (
-            <p className="text-xs text-muted-foreground">{nairaDisplay(Number(form.price_in_kobo))}</p>
+            <p className="text-xs text-muted-foreground">
+              {nairaDisplay(Number(form.price_in_kobo))}
+            </p>
           )}
         </div>
       </div>
@@ -190,7 +197,10 @@ function TicketTypesStep({
         {/* Tier rows */}
         <div className="divide-y">
           {tiers.map((tier, i) => (
-            <div key={i} className="grid grid-cols-[1fr_140px_100px_60px_36px] gap-2 px-3 py-2 items-center">
+            <div
+              key={i}
+              className="grid grid-cols-[1fr_140px_100px_60px_36px] gap-2 px-3 py-2 items-center"
+            >
               <Input
                 className="h-8 text-sm"
                 value={tier.name}
@@ -325,9 +335,7 @@ export function EventCreatePage() {
         </div>
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Create Event</h1>
-          <p className="text-sm text-muted-foreground">
-            Set up a new event and its ticket tiers
-          </p>
+          <p className="text-sm text-muted-foreground">Set up a new event and its ticket tiers</p>
         </div>
       </div>
 
@@ -375,7 +383,10 @@ export function EventCreatePage() {
           tiers={tiers}
           onChange={setTiers}
           onBack={() => setStep(1)}
-          onSubmit={() => { setSubmitError(null); mutate(); }}
+          onSubmit={() => {
+            setSubmitError(null);
+            mutate();
+          }}
           isSubmitting={isPending}
           submitError={submitError}
         />

@@ -64,45 +64,42 @@ export function EmailPage() {
   const [includeFields, setIncludeFields] = useState<IncludeFields>(DEFAULT_FIELDS);
   const [sending, setSending] = useState(false);
   const [previewHtml, setPreviewHtml] = useState("");
-  const debounceTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const loadTickets = useCallback(
-    async (q: string, s: string) => {
-      setLoading(true);
-      try {
-        const data = await fetchEmailTickets({
-          search: q || undefined,
-          status: s === "all" ? undefined : s,
-        });
-        setTickets(Array.isArray(data) ? data : []);
+  // Load all tickets once — filter client-side to avoid server param serialisation issues
+  useEffect(() => {
+    setLoading(true);
+    fetchEmailTickets({})
+      .then((data) => {
+        const rows = Array.isArray(data) ? data : [];
+        setTickets(rows);
         if (presetEmail) {
-          const match = data.find((t) => t.email === presetEmail);
+          const match = rows.find((t) => t.email === presetEmail);
           if (match) setSelectedIds(new Set([match.id]));
         }
-      } catch (e) {
+      })
+      .catch((e) => {
         const msg = e instanceof Error ? e.message : String(e);
         notify(`Failed to load tickets: ${msg}`, { type: "error" });
-      } finally {
-        setLoading(false);
-      }
-    },
-    [presetEmail, notify],
-  );
+      })
+      .finally(() => setLoading(false));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  useEffect(() => {
-    loadTickets("", "all");
-  }, [loadTickets]);
+  // Client-side filtering — instant, no server roundtrip
+  const visibleTickets = tickets.filter((t) => {
+    const q = search.toLowerCase();
+    const matchesSearch =
+      !q || t.email.toLowerCase().includes(q) || (t.name ?? "").toLowerCase().includes(q);
+    const matchesStatus = statusFilter === "all" || t.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const q = e.target.value;
-    setSearch(q);
-    if (debounceTimer.current) clearTimeout(debounceTimer.current);
-    debounceTimer.current = setTimeout(() => loadTickets(q, statusFilter), 300);
+    setSearch(e.target.value);
   };
 
   const handleStatusChange = (s: string) => {
     setStatusFilter(s);
-    loadTickets(search, s);
   };
 
   const toggleRow = (id: string) => {
@@ -114,10 +111,18 @@ export function EmailPage() {
   };
 
   const toggleAll = () => {
-    if (selectedIds.size === tickets.length && tickets.length > 0) {
-      setSelectedIds(new Set());
+    if (visibleTickets.every((t) => selectedIds.has(t.id)) && visibleTickets.length > 0) {
+      setSelectedIds((prev) => {
+        const next = new Set(prev);
+        visibleTickets.forEach((t) => next.delete(t.id));
+        return next;
+      });
     } else {
-      setSelectedIds(new Set(tickets.map((t) => t.id)));
+      setSelectedIds((prev) => {
+        const next = new Set(prev);
+        visibleTickets.forEach((t) => next.add(t.id));
+        return next;
+      });
     }
   };
 
@@ -200,7 +205,8 @@ export function EmailPage() {
     }
   };
 
-  const allSelected = tickets.length > 0 && selectedIds.size === tickets.length;
+  const allSelected =
+    visibleTickets.length > 0 && visibleTickets.every((t) => selectedIds.has(t.id));
 
   return (
     <div className="p-6 max-w-[1400px] mx-auto">
@@ -272,14 +278,14 @@ export function EmailPage() {
                         Loading…
                       </td>
                     </tr>
-                  ) : tickets.length === 0 ? (
+                  ) : visibleTickets.length === 0 ? (
                     <tr>
                       <td colSpan={3} className="p-4 text-center text-muted-foreground text-xs">
-                        No tickets found
+                        {tickets.length === 0 ? "No tickets found" : "No tickets match your search"}
                       </td>
                     </tr>
                   ) : (
-                    tickets.map((t) => (
+                    visibleTickets.map((t) => (
                       <tr
                         key={t.id}
                         onClick={() => toggleRow(t.id)}
@@ -309,6 +315,7 @@ export function EmailPage() {
 
             <div className="p-3 border-t text-xs text-muted-foreground">
               {selectedIds.size} of {tickets.length} selected
+              {visibleTickets.length < tickets.length && ` (${visibleTickets.length} visible)`}
             </div>
           </div>
 

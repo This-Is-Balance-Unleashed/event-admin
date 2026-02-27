@@ -13,6 +13,7 @@
 ## Task 1: Install Resend and add env vars
 
 **Files:**
+
 - Modify: `package.json` (via bun)
 - Modify: `.env`
 
@@ -47,6 +48,7 @@ git commit -m "feat: install resend sdk"
 ## Task 2: Build `buildEmailHtml` pure function with tests (TDD)
 
 **Files:**
+
 - Create: `src/lib/email-template.ts`
 - Create: `src/lib/email-template.test.ts`
 
@@ -218,21 +220,25 @@ export function buildEmailHtml(
   message: string,
   subject: string,
 ): string {
-  const priceFormatted = recipient.pricePaid != null
-    ? `₦${(recipient.pricePaid / 100).toLocaleString("en-NG")}`
-    : "";
+  const priceFormatted =
+    recipient.pricePaid != null ? `₦${(recipient.pricePaid / 100).toLocaleString("en-NG")}` : "";
 
   const detailRows = [
     fields.name && recipient.name ? fieldRow("Attendee Name", recipient.name) : "",
-    fields.ticketType && recipient.ticketTypeName ? fieldRow("Ticket Type", recipient.ticketTypeName) : "",
+    fields.ticketType && recipient.ticketTypeName
+      ? fieldRow("Ticket Type", recipient.ticketTypeName)
+      : "",
     fields.pricePaid && priceFormatted ? fieldRow("Price Paid", priceFormatted) : "",
     fields.reference && recipient.reference ? fieldRow("Reference", recipient.reference) : "",
     fields.dateVenue ? fieldRow("Date", EVENT.date) : "",
     fields.dateVenue ? fieldRow("Venue", EVENT.venue) : "",
-  ].filter(Boolean).join("");
+  ]
+    .filter(Boolean)
+    .join("");
 
-  const qrButton = fields.qrCode && recipient.qrCodeUrl
-    ? `
+  const qrButton =
+    fields.qrCode && recipient.qrCodeUrl
+      ? `
     <tr>
       <td style="padding:24px 0 8px;text-align:center;">
         <a href="${recipient.qrCodeUrl}"
@@ -246,7 +252,7 @@ export function buildEmailHtml(
         </p>
       </td>
     </tr>`
-    : "";
+      : "";
 
   const customMessageBlock = message
     ? `
@@ -302,11 +308,15 @@ export function buildEmailHtml(
                 ${customMessageBlock}
 
                 <!-- Field details -->
-                ${detailRows ? `<tr><td style="padding:16px 0 8px;">
+                ${
+                  detailRows
+                    ? `<tr><td style="padding:16px 0 8px;">
                   <table width="100%" cellpadding="0" cellspacing="0">
                     ${detailRows}
                   </table>
-                </td></tr>` : ""}
+                </td></tr>`
+                    : ""
+                }
 
                 <!-- QR Button -->
                 ${qrButton}
@@ -357,10 +367,12 @@ git commit -m "feat: add buildEmailHtml pure function with tests"
 ## Task 3: Create `src/lib/email.ts` server functions with tests (TDD)
 
 **Files:**
+
 - Create: `src/lib/email.ts`
 - Create: `src/lib/email.test.ts`
 
 Two server functions:
+
 1. `fetchEmailTickets({ search?, status? })` — queries Supabase
 2. `sendTicketEmails({ recipients, subject, message, includeFields })` — calls Resend
 
@@ -578,7 +590,9 @@ export async function fetchEmailTicketsHandler(params: {
 }): Promise<EmailTicket[]> {
   let query = supabaseClient
     .from("tickets")
-    .select("id, email, name, status, price_paid, paystack_reference, qr_code_url, ticket_types(name)")
+    .select(
+      "id, email, name, status, price_paid, paystack_reference, qr_code_url, ticket_types(name)",
+    )
     .order("created_at", { ascending: false });
 
   if (params.search) {
@@ -660,6 +674,7 @@ git commit -m "feat: add email server functions with tests"
 ## Task 4: Create `src/components/admin/email-page.tsx`
 
 **Files:**
+
 - Create: `src/components/admin/email-page.tsx`
 
 No unit tests for this UI component — test manually via the browser. This component is pure React state + server function calls.
@@ -1061,6 +1076,7 @@ git commit -m "feat: add EmailPage compose UI"
 ## Task 5: Wire route, sidebar, and ticket show button
 
 **Files:**
+
 - Modify: `src/routes/admin/$.tsx`
 - Modify: `src/components/admin/app-sidebar.tsx`
 - Modify: `src/components/admin/ticket-show.tsx`
@@ -1068,11 +1084,13 @@ git commit -m "feat: add EmailPage compose UI"
 ### Step 1: Add route to `src/routes/admin/$.tsx`
 
 At the top, add import:
+
 ```typescript
 import { EmailPage } from "@/components/admin/email-page";
 ```
 
 Inside `<CustomRoutes>`, add:
+
 ```typescript
 <RouterRoute path="/email" element={<EmailPage />} />
 ```
@@ -1080,11 +1098,13 @@ Inside `<CustomRoutes>`, add:
 ### Step 2: Add `SendEmailMenuItem` to `src/components/admin/app-sidebar.tsx`
 
 Add import at top:
+
 ```typescript
 import { MailPlus } from "lucide-react";
 ```
 
 Add the component before `CheckInMenuItem`:
+
 ```typescript
 export const SendEmailMenuItem = ({ onClick }: { onClick?: () => void }) => {
   const match = useMatch({ path: "/admin/email", end: false });
@@ -1102,6 +1122,7 @@ export const SendEmailMenuItem = ({ onClick }: { onClick?: () => void }) => {
 ```
 
 In the `AppSidebar` render where other menu items are listed, add:
+
 ```typescript
 <SendEmailMenuItem onClick={handleClick} />
 ```
@@ -1109,12 +1130,14 @@ In the `AppSidebar` render where other menu items are listed, add:
 ### Step 3: Add "Send Email" button to `src/components/admin/ticket-show.tsx`
 
 Add import at top:
+
 ```typescript
 import { Link } from "@tanstack/react-router";
 import { Mail } from "lucide-react";
 ```
 
 Add `SendEmailButton` component:
+
 ```typescript
 function SendEmailButton() {
   const record = useRecordContext();
@@ -1131,6 +1154,7 @@ function SendEmailButton() {
 ```
 
 In `TicketShow`, inside the actions div alongside `CheckInButton`:
+
 ```typescript
 <div className="pt-4 flex gap-3 flex-wrap">
   <CheckInButton />
@@ -1176,13 +1200,13 @@ git commit -m "fix: address build or type errors in email feature"
 
 ## Summary
 
-| Task | Files Created/Modified | Tests |
-|------|----------------------|-------|
-| 1 | `package.json`, `.env` | — |
-| 2 | `src/lib/email-template.ts`, `src/lib/email-template.test.ts` | 14 |
-| 3 | `src/lib/email.ts`, `src/lib/email.test.ts` | 7 |
-| 4 | `src/components/admin/email-page.tsx` | — |
-| 5 | `src/routes/admin/$.tsx`, `app-sidebar.tsx`, `ticket-show.tsx` | — |
-| 6 | — | Verification |
+| Task | Files Created/Modified                                         | Tests        |
+| ---- | -------------------------------------------------------------- | ------------ |
+| 1    | `package.json`, `.env`                                         | —            |
+| 2    | `src/lib/email-template.ts`, `src/lib/email-template.test.ts`  | 14           |
+| 3    | `src/lib/email.ts`, `src/lib/email.test.ts`                    | 7            |
+| 4    | `src/components/admin/email-page.tsx`                          | —            |
+| 5    | `src/routes/admin/$.tsx`, `app-sidebar.tsx`, `ticket-show.tsx` | —            |
+| 6    | —                                                              | Verification |
 
 **Total new tests: 21**

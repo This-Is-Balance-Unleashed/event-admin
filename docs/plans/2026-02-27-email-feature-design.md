@@ -14,25 +14,29 @@ Allow admins to send branded HTML ticket confirmation emails to one or multiple 
 ## Architecture
 
 ### New files
-| File | Purpose |
-|------|---------|
-| `src/lib/email.ts` | `sendTicketEmails` + `fetchEmailTickets` server functions (Resend) |
-| `src/components/admin/email-page.tsx` | Full compose + send UI |
+
+| File                                  | Purpose                                                            |
+| ------------------------------------- | ------------------------------------------------------------------ |
+| `src/lib/email.ts`                    | `sendTicketEmails` + `fetchEmailTickets` server functions (Resend) |
+| `src/components/admin/email-page.tsx` | Full compose + send UI                                             |
 
 ### Modified files
-| File | Change |
-|------|--------|
-| `src/routes/admin/$.tsx` | Add `/email` custom route |
-| `src/components/admin/app-sidebar.tsx` | Add `SendEmailMenuItem` |
-| `.env` | Add `RESEND_API_KEY`, `RESEND_FROM_EMAIL` |
+
+| File                                   | Change                                    |
+| -------------------------------------- | ----------------------------------------- |
+| `src/routes/admin/$.tsx`               | Add `/email` custom route                 |
+| `src/components/admin/app-sidebar.tsx` | Add `SendEmailMenuItem`                   |
+| `.env`                                 | Add `RESEND_API_KEY`, `RESEND_FROM_EMAIL` |
 
 ### Data flow
+
 1. Page loads → `fetchEmailTickets` server fn fetches tickets from Supabase (search/filter params)
 2. Admin selects recipients (checkboxes / select-all / paste emails), picks included fields, edits subject + message
 3. On send → `sendTicketEmails` server fn builds one branded HTML email per recipient, calls Resend batch API
 4. Result: `X sent, Y failed` with per-failure details displayed
 
 ### Single-ticket path
+
 Navigating from the ticket show page passes `?email=foo@bar.com` as a query param → `/admin/email?email=foo@bar.com` → page auto-selects that row on load.
 
 ---
@@ -74,19 +78,20 @@ Navigating from the ticket show page passes `?email=foo@bar.com` as a query para
 
 Branded HTML email built server-side:
 
-| Section | Content |
-|---------|---------|
-| Header | Hit Refresh logo on `#39B54A` green background |
-| Hero | "It's Time To Breathe Again" (serif heading) |
-| Event info | Feb 28, 2026 · Pistis Annex, Lekki, Lagos |
-| Custom message | Admin's typed message as a paragraph |
+| Section            | Content                                                          |
+| ------------------ | ---------------------------------------------------------------- |
+| Header             | Hit Refresh logo on `#39B54A` green background                   |
+| Hero               | "It's Time To Breathe Again" (serif heading)                     |
+| Event info         | Feb 28, 2026 · Pistis Annex, Lekki, Lagos                        |
+| Custom message     | Admin's typed message as a paragraph                             |
 | Conditional fields | Name, Ticket Type, Price (₦X,XXX), Reference, QR Code CTA button |
-| Footer | `events@balanceunleashed.org`, social links |
+| Footer             | `events@balanceunleashed.org`, social links                      |
 
 **Colors:** `#39B54A` green · `#FF8E00` orange accent · `#f5f1ed` background · `#1a1a1a` text
 **Fonts:** Young Serif (heading fallback: Georgia) · DM Sans (body fallback: Arial)
 
 ### Included field checkboxes (admin picks before send)
+
 - Name
 - Ticket type
 - QR Code (as CTA button)
@@ -99,10 +104,12 @@ Branded HTML email built server-side:
 ## Server Function Contracts
 
 ### `fetchEmailTickets({ search?, status? })`
+
 - Queries `tickets` table (with joins to `ticket_types`)
 - Returns: `Array<{ id, email, name, status, ticket_type_name, price_paid, paystack_reference, qr_code_url }>`
 
 ### `sendTicketEmails({ recipients, subject, message, includeFields })`
+
 - `recipients`: `Array<{ email, name?, ticketTypeName?, pricePaid?, reference?, qrCodeUrl? }>`
 - `subject`: string
 - `message`: string (admin's custom text)

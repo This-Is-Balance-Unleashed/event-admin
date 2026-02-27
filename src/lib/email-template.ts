@@ -50,9 +50,7 @@ export function buildEmailHtml(
   subject: string,
 ): string {
   const priceFormatted =
-    recipient.pricePaid != null
-      ? `₦${(recipient.pricePaid / 100).toLocaleString("en-NG")}`
-      : "";
+    recipient.pricePaid != null ? `₦${(recipient.pricePaid / 100).toLocaleString("en-NG")}` : "";
 
   const detailRows = [
     fields.name && recipient.name ? fieldRow("Attendee Name", recipient.name) : "",

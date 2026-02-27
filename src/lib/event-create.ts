@@ -38,7 +38,8 @@ export async function createEventWithTicketTypesHandler(
     .limit(1)
     .single();
 
-  if (orgError || !existingEvent) throw new Error("Could not resolve organizer_id: " + toMessage(orgError));
+  if (orgError || !existingEvent)
+    throw new Error("Could not resolve organizer_id: " + toMessage(orgError));
   const organizerId = existingEvent.organizer_id as string;
 
   // 1. Insert event
@@ -78,7 +79,9 @@ export async function createEventWithTicketTypesHandler(
   if (typesError) {
     // Rollback: delete the event
     const { error: rollbackError } = await supabaseClient.from("events").delete().eq("id", eventId);
-    const rollbackNote = rollbackError ? ` (rollback also failed: ${toMessage(rollbackError)})` : "";
+    const rollbackNote = rollbackError
+      ? ` (rollback also failed: ${toMessage(rollbackError)})`
+      : "";
     throw new Error(toMessage(typesError) + rollbackNote);
   }
 
@@ -86,9 +89,5 @@ export async function createEventWithTicketTypesHandler(
 }
 
 export const createEventWithTicketTypes = createServerFn({ method: "POST" })
-  .inputValidator(
-    (input: { eventData: EventCreateData; ticketTypes: TicketTypeInput[] }) => input,
-  )
-  .handler(({ data }) =>
-    createEventWithTicketTypesHandler(data.eventData, data.ticketTypes),
-  );
+  .inputValidator((input: { eventData: EventCreateData; ticketTypes: TicketTypeInput[] }) => input)
+  .handler(({ data }) => createEventWithTicketTypesHandler(data.eventData, data.ticketTypes));

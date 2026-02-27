@@ -29,7 +29,7 @@ const EVENT_DATA = {
 
 const TICKET_TYPES = [
   { name: "General", price_in_kobo: 1_000_000, max_quantity: null, is_available: true },
-  { name: "VIP",     price_in_kobo: 1_800_000, max_quantity: null, is_available: true },
+  { name: "VIP", price_in_kobo: 1_800_000, max_quantity: null, is_available: true },
 ];
 
 beforeEach(() => {

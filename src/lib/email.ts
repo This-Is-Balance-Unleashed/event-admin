@@ -40,10 +40,12 @@ export type SendEmailResult = {
   failed: Array<{ email: string; error: string }>;
 };
 
-export async function fetchEmailTicketsHandler(params: {
-  search?: string;
-  status?: string;
-} = {}): Promise<EmailTicket[]> {
+export async function fetchEmailTicketsHandler(
+  params: {
+    search?: string;
+    status?: string;
+  } = {},
+): Promise<EmailTicket[]> {
   // Fetch tickets without join to avoid schema-cache issues
   let query = supabaseClient
     .from("tickets")
@@ -61,9 +63,7 @@ export async function fetchEmailTicketsHandler(params: {
   if (error || !data) throw new Error(toMessage(error));
 
   // Fetch ticket type names separately and build a lookup map
-  const { data: ticketTypes } = await supabaseClient
-    .from("ticket_types")
-    .select("id, name");
+  const { data: ticketTypes } = await supabaseClient.from("ticket_types").select("id, name");
 
   const typeMap = new Map((ticketTypes ?? []).map((t) => [t.id, t.name as string]));
 

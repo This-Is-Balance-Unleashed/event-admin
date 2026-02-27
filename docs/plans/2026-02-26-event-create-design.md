@@ -23,6 +23,7 @@ A multi-step stepper page that creates a new event and its ticket types in a sin
 ## Step 1 — Event Details
 
 Fields:
+
 - `title` — text, required
 - `description` — textarea, optional
 - `event_date` — datetime picker, required
@@ -36,14 +37,15 @@ Validation before advancing to step 2: `title` and `event_date` must be non-empt
 
 Starts pre-filled with 4 standard tiers:
 
-| Name       | Price (kobo) | Max Qty | Available |
-|------------|-------------|---------|-----------|
-| General    | 1,000,000   | —       | true      |
-| VIP        | 1,800,000   | —       | true      |
-| Corporate  | 7,000,000   | —       | true      |
-| Virtual    | 650,000     | —       | true      |
+| Name      | Price (kobo) | Max Qty | Available |
+| --------- | ------------ | ------- | --------- |
+| General   | 1,000,000    | —       | true      |
+| VIP       | 1,800,000    | —       | true      |
+| Corporate | 7,000,000    | —       | true      |
+| Virtual   | 650,000      | —       | true      |
 
 Each row editable inline:
+
 - `name` — text input
 - `price_in_kobo` — number input with live ₦ preview
 - `max_quantity` — number input (blank = unlimited)
@@ -56,12 +58,12 @@ Sort order is assigned automatically (1-indexed by row position at submit time).
 
 ## Files to Create / Modify
 
-| File | Action |
-|------|--------|
-| `src/lib/event-create.ts` | Create — server function |
-| `src/components/admin/event-create-page.tsx` | Create — stepper UI |
-| `src/routes/admin/$.tsx` | Modify — add `/event-create` custom route |
-| `src/components/admin/app-sidebar.tsx` | Modify — add CreateEventMenuItem |
+| File                                         | Action                                    |
+| -------------------------------------------- | ----------------------------------------- |
+| `src/lib/event-create.ts`                    | Create — server function                  |
+| `src/components/admin/event-create-page.tsx` | Create — stepper UI                       |
+| `src/routes/admin/$.tsx`                     | Modify — add `/event-create` custom route |
+| `src/components/admin/app-sidebar.tsx`       | Modify — add CreateEventMenuItem          |
 
 ## Error Handling
 

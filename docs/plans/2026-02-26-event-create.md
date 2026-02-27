@@ -13,6 +13,7 @@
 ## Task 1: Server function — `src/lib/event-create.ts`
 
 **Files:**
+
 - Create: `src/lib/event-create.ts`
 - Test: `src/lib/event-create.test.ts`
 
@@ -67,7 +68,7 @@ const EVENT_DATA = {
 
 const TICKET_TYPES = [
   { name: "General", price_in_kobo: 1_000_000, max_quantity: null, is_available: true },
-  { name: "VIP",     price_in_kobo: 1_800_000, max_quantity: null, is_available: true },
+  { name: "VIP", price_in_kobo: 1_800_000, max_quantity: null, is_available: true },
 ];
 
 beforeEach(() => {
@@ -217,12 +218,8 @@ export async function createEventWithTicketTypesHandler(
 }
 
 export const createEventWithTicketTypes = createServerFn({ method: "POST" })
-  .inputValidator(
-    (input: { eventData: EventCreateData; ticketTypes: TicketTypeInput[] }) => input,
-  )
-  .handler(({ data }) =>
-    createEventWithTicketTypesHandler(data.eventData, data.ticketTypes),
-  );
+  .inputValidator((input: { eventData: EventCreateData; ticketTypes: TicketTypeInput[] }) => input)
+  .handler(({ data }) => createEventWithTicketTypesHandler(data.eventData, data.ticketTypes));
 ```
 
 ### Step 4: Run tests to verify they pass
@@ -245,6 +242,7 @@ git commit -m "feat: add createEventWithTicketTypes server function"
 ## Task 2: UI — `src/components/admin/event-create-page.tsx`
 
 **Files:**
+
 - Create: `src/components/admin/event-create-page.tsx`
 
 No automated test for UI — verify manually via build + dev server.
@@ -662,6 +660,7 @@ git commit -m "feat: add EventCreatePage stepper component"
 ## Task 3: Wire up route and sidebar
 
 **Files:**
+
 - Modify: `src/routes/admin/$.tsx`
 - Modify: `src/components/admin/app-sidebar.tsx`
 
@@ -684,7 +683,14 @@ Inside `<CustomRoutes>`:
 In `src/components/admin/app-sidebar.tsx`, add `CalendarPlus` to the lucide import:
 
 ```typescript
-import { CalendarPlus, CreditCard, RefreshCw, ScanLine, ShieldCheck, TicketPlus } from "lucide-react";
+import {
+  CalendarPlus,
+  CreditCard,
+  RefreshCw,
+  ScanLine,
+  ShieldCheck,
+  TicketPlus,
+} from "lucide-react";
 ```
 
 Add `CreateEventMenuItem` component after `ResourceMenuItem`:
