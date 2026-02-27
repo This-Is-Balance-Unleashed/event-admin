@@ -44,11 +44,10 @@ export async function fetchEmailTicketsHandler(params: {
   search?: string;
   status?: string;
 }): Promise<EmailTicket[]> {
+  // Fetch tickets without join to avoid schema-cache issues
   let query = supabaseClient
     .from("tickets")
-    .select(
-      "id, email, name, status, price_paid, paystack_reference, qr_code_url, ticket_types(name)",
-    )
+    .select("id, email, name, status, price_paid, paystack_reference, qr_code_url, ticket_type_id")
     .order("created_at", { ascending: false });
 
   if (params.search) {
@@ -59,15 +58,21 @@ export async function fetchEmailTicketsHandler(params: {
   }
 
   const { data, error } = await query;
-
   if (error || !data) throw new Error(toMessage(error));
+
+  // Fetch ticket type names separately and build a lookup map
+  const { data: ticketTypes } = await supabaseClient
+    .from("ticket_types")
+    .select("id, name");
+
+  const typeMap = new Map((ticketTypes ?? []).map((t) => [t.id, t.name as string]));
 
   return data.map((row) => ({
     id: row.id,
     email: row.email,
     name: row.name ?? undefined,
     status: row.status,
-    ticketTypeName: (row.ticket_types as { name: string } | null)?.name ?? undefined,
+    ticketTypeName: typeMap.get(row.ticket_type_id) ?? undefined,
     pricePaid: row.price_paid ?? undefined,
     reference: row.paystack_reference ?? undefined,
     qrCodeUrl: row.qr_code_url ?? undefined,

@@ -79,8 +79,9 @@ export function EmailPage() {
           const match = data.find((t) => t.email === presetEmail);
           if (match) setSelectedIds(new Set([match.id]));
         }
-      } catch {
-        notify("Failed to load tickets", { type: "error" });
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : String(e);
+        notify(`Failed to load tickets: ${msg}`, { type: "error" });
       } finally {
         setLoading(false);
       }

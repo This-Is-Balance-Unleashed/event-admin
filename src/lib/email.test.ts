@@ -14,12 +14,14 @@ vi.mock("./supabase-provider", () => ({
   supabaseClient: {
     from: vi.fn((table: string) => {
       if (table === "tickets") return ticketsChain;
+      if (table === "ticket_types") return ticketTypesChain;
       return {};
     }),
   },
 }));
 
 let ticketsChain: Record<string, ReturnType<typeof vi.fn>>;
+let ticketTypesChain: Record<string, ReturnType<typeof vi.fn>>;
 let mockBatchSend: ReturnType<typeof vi.fn>;
 
 import { fetchEmailTicketsHandler, sendTicketEmailsHandler } from "./email";
@@ -33,6 +35,13 @@ beforeEach(() => {
     ilike: vi.fn().mockReturnThis(),
     eq: vi.fn().mockReturnThis(),
     order: vi.fn().mockReturnThis(),
+  };
+
+  ticketTypesChain = {
+    select: vi.fn().mockResolvedValue({
+      data: [{ id: "tt1", name: "General" }],
+      error: null,
+    }),
   };
 
   mockBatchSend = vi.fn();
@@ -53,7 +62,7 @@ describe("fetchEmailTicketsHandler", () => {
           price_paid: 1000000,
           paystack_reference: "PSK-ABC",
           qr_code_url: "https://example.com/qr/1",
-          ticket_types: { name: "General" },
+          ticket_type_id: "tt1",
         },
       ],
       error: null,
@@ -62,7 +71,7 @@ describe("fetchEmailTicketsHandler", () => {
     const result = await fetchEmailTicketsHandler({});
     expect(result).toHaveLength(1);
     expect(result[0].email).toBe("jane@test.com");
-    expect(result[0].ticketTypeName).toBe("General");
+    expect(result[0].ticketTypeName).toBe("General"); // resolved via typeMap
   });
 
   it("throws on Supabase error", async () => {
