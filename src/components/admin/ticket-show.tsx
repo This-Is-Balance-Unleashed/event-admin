@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { useRecordContext, useUpdate, useNotify, useRefresh } from "ra-core";
 import QRCode from "react-qr-code";
 import { Show } from "@/components/admin/show";
@@ -7,9 +8,14 @@ import { RecordField } from "@/components/admin/record-field";
 import { ReferenceField } from "@/components/admin/reference-field";
 import { TextField } from "@/components/admin/text-field";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { TicketStatusBadge } from "@/components/admin/ticket-status-badge";
 import { ScanLine, CheckCircle2, AlertCircle, Mail } from "lucide-react";
 import { tanStackRouterProvider } from "ra-router-tanstack";
+import { updateTicket } from "@/lib/ticket-edit";
+import { fetchTicketTypes } from "@/lib/ticket-create";
 
 const { Link } = tanStackRouterProvider;
 
@@ -103,6 +109,77 @@ function SendEmailButton() {
   );
 }
 
+type TicketType = { id: string; name: string };
+
+function EditTicketSection() {
+  const record = useRecordContext();
+  const notify = useNotify();
+  const refresh = useRefresh();
+  const [name, setName] = useState("");
+  const [ticketTypeId, setTicketTypeId] = useState("");
+  const [ticketTypes, setTicketTypes] = useState<TicketType[]>([]);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (!record) return;
+    setName(record.name ?? "");
+    setTicketTypeId(record.ticket_type_id ?? "");
+    fetchTicketTypes().then((types) => setTicketTypes(Array.isArray(types) ? types : []));
+  }, [record?.id]);
+
+  if (!record) return null;
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      await updateTicket({
+        data: { id: String(record.id), name: name || undefined, ticketTypeId: ticketTypeId || undefined },
+      });
+      notify("Ticket updated", { type: "success" });
+      refresh();
+    } catch (e) {
+      notify(`Update failed: ${e instanceof Error ? e.message : String(e)}`, { type: "error" });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="pt-4 border-t mt-2">
+      <p className="text-sm font-medium mb-3">Edit Ticket</p>
+      <div className="flex flex-col gap-3 max-w-sm">
+        <div>
+          <Label className="text-xs text-muted-foreground mb-1 block">Name</Label>
+          <Input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Attendee name"
+            className="h-8 text-sm"
+          />
+        </div>
+        <div>
+          <Label className="text-xs text-muted-foreground mb-1 block">Ticket Type</Label>
+          <Select value={ticketTypeId} onValueChange={setTicketTypeId}>
+            <SelectTrigger className="h-8 text-sm">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {ticketTypes.map((t) => (
+                <SelectItem key={t.id} value={t.id}>
+                  {t.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <Button onClick={handleSave} disabled={saving} size="sm" className="w-fit">
+          {saving ? "Saving…" : "Save Changes"}
+        </Button>
+      </div>
+    </div>
+  );
+}
+
 export function TicketShow() {
   return (
     <Show>
@@ -136,6 +213,7 @@ export function TicketShow() {
           <CheckInButton />
           <SendEmailButton />
         </div>
+        <EditTicketSection />
       </div>
     </Show>
   );
