@@ -113,16 +113,6 @@ export const DashboardMenuItem = ({ onClick }: { onClick?: () => void }) => {
   );
 };
 
-/**
- * Menu item for a resource link in the sidebar.
- *
- * This component renders a sidebar menu item that links to a resource's list view.
- * It checks permissions using canAccess and displays as active when the user is viewing that resource.
- * The component icon and label are derived from the resource definition.
- *
- * @example
- * <ResourceMenuItem key={name} name="posts" onClick={handleClick} />
- */
 export const CreateEventMenuItem = ({ onClick }: { onClick?: () => void }) => {
   const match = useMatch({ path: "/admin/event-create", end: false });
   return (
