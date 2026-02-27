@@ -43,7 +43,7 @@ export type SendEmailResult = {
 export async function fetchEmailTicketsHandler(params: {
   search?: string;
   status?: string;
-}): Promise<EmailTicket[]> {
+} = {}): Promise<EmailTicket[]> {
   // Fetch tickets without join to avoid schema-cache issues
   let query = supabaseClient
     .from("tickets")
@@ -107,7 +107,7 @@ export async function sendTicketEmailsHandler(input: SendEmailInput): Promise<Se
 
 export const fetchEmailTickets = createServerFn({ method: "POST" })
   .inputValidator((input: { search?: string; status?: string }) => input)
-  .handler(({ data }) => fetchEmailTicketsHandler(data));
+  .handler(({ data }) => fetchEmailTicketsHandler(data ?? {}));
 
 export const sendTicketEmails = createServerFn({ method: "POST" })
   .inputValidator((input: SendEmailInput) => input)
