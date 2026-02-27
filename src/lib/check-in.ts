@@ -28,6 +28,7 @@ async function searchTicketsHandler(q: string): Promise<CheckInTicket[]> {
     .from("tickets")
     .select("id, name, email, status, price_paid, checked_in_at, ticket_type_id")
     .or(orParts.join(","))
+    .not("paystack_reference", "ilike", "test_%")
     .limit(10);
 
   if (error) throw new Error("Search failed: " + error.message);

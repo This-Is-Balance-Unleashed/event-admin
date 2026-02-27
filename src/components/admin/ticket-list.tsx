@@ -71,7 +71,11 @@ function PriceCell() {
 
 export function TicketList() {
   return (
-    <List filters={listFilters} sort={{ field: "created_at", order: "DESC" }}>
+    <List
+      filters={listFilters}
+      sort={{ field: "created_at", order: "DESC" }}
+      filter={{ "paystack_reference@not.ilike": "test_%" }}
+    >
       <DataTable>
         <DataTable.Col source="name" />
         <DataTable.Col source="email" />
