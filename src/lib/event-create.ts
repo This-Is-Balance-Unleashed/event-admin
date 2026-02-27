@@ -30,6 +30,17 @@ export async function createEventWithTicketTypesHandler(
   ticketTypes: TicketTypeInput[],
 ): Promise<{ eventId: string }> {
   if (ticketTypes.length === 0) throw new Error("At least one ticket type is required");
+
+  // 0. Fetch organizer_id from existing event (events.organizer_id is NOT NULL)
+  const { data: existingEvent, error: orgError } = await supabaseClient
+    .from("events")
+    .select("organizer_id")
+    .limit(1)
+    .single();
+
+  if (orgError || !existingEvent) throw new Error("Could not resolve organizer_id: " + toMessage(orgError));
+  const organizerId = existingEvent.organizer_id as string;
+
   // 1. Insert event
   const { data: event, error: eventError } = await supabaseClient
     .from("events")
@@ -40,6 +51,7 @@ export async function createEventWithTicketTypesHandler(
       location: eventData.location || null,
       max_attendees: eventData.max_attendees ?? null,
       price_in_kobo: eventData.price_in_kobo ?? 0,
+      organizer_id: organizerId,
     })
     .select("id")
     .single();

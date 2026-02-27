@@ -1,26 +1,20 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-const makeChain = (overrides: Record<string, unknown> = {}) => ({
-  insert: vi.fn(),
-  select: vi.fn(),
-  single: vi.fn(),
-  delete: vi.fn(),
-  eq: vi.fn(),
-  ...overrides,
-});
+const ORG_ID = "org-uuid";
 
 vi.mock("./supabase-provider", () => ({
   supabaseClient: {
     from: vi.fn((table: string) => {
       if (table === "events") return eventsChain;
       if (table === "ticket_types") return ticketTypesChain;
-      return makeChain();
+      return {};
     }),
   },
 }));
 
-let eventsChain: ReturnType<typeof makeChain>;
-let ticketTypesChain: ReturnType<typeof makeChain>;
+// eventsChain now needs: select+limit+single (organizer fetch), insert+select+single (event insert), delete+eq (rollback)
+let eventsChain: Record<string, ReturnType<typeof vi.fn>>;
+let ticketTypesChain: Record<string, ReturnType<typeof vi.fn>>;
 
 import { createEventWithTicketTypesHandler } from "./event-create";
 
@@ -40,28 +34,31 @@ const TICKET_TYPES = [
 
 beforeEach(() => {
   vi.clearAllMocks();
+
   eventsChain = {
     insert: vi.fn().mockReturnThis(),
     select: vi.fn().mockReturnThis(),
+    limit: vi.fn().mockReturnThis(),
     single: vi.fn().mockReturnThis(),
     delete: vi.fn().mockReturnThis(),
     eq: vi.fn().mockReturnThis(),
-  } as unknown as ReturnType<typeof makeChain>;
+  };
 
   ticketTypesChain = {
     insert: vi.fn().mockReturnThis(),
     select: vi.fn().mockReturnThis(),
-  } as unknown as ReturnType<typeof makeChain>;
+  };
 });
 
 describe("createEventWithTicketTypesHandler", () => {
   it("inserts event then ticket types and returns eventId", async () => {
     const eventId = "event-uuid-1";
-    (eventsChain.single as ReturnType<typeof vi.fn>).mockResolvedValue({
-      data: { id: eventId },
-      error: null,
-    });
-    (ticketTypesChain.select as ReturnType<typeof vi.fn>).mockResolvedValue({
+    // First single() call = organizer_id fetch; second = event insert result
+    eventsChain.single
+      .mockResolvedValueOnce({ data: { organizer_id: ORG_ID }, error: null })
+      .mockResolvedValueOnce({ data: { id: eventId }, error: null });
+
+    ticketTypesChain.select.mockResolvedValue({
       data: TICKET_TYPES.map((t, i) => ({ ...t, id: `tt-${i}`, event_id: eventId })),
       error: null,
     });
@@ -72,11 +69,13 @@ describe("createEventWithTicketTypesHandler", () => {
 
   it("rolls back event when ticket type insert fails", async () => {
     const eventId = "event-uuid-2";
-    (eventsChain.single as ReturnType<typeof vi.fn>).mockResolvedValue({
-      data: { id: eventId },
-      error: null,
-    });
-    (ticketTypesChain.select as ReturnType<typeof vi.fn>).mockResolvedValue({
+    eventsChain.single
+      .mockResolvedValueOnce({ data: { organizer_id: ORG_ID }, error: null })
+      .mockResolvedValueOnce({ data: { id: eventId }, error: null });
+    // rollback delete chain resolves cleanly
+    eventsChain.eq.mockResolvedValue({ error: null });
+
+    ticketTypesChain.select.mockResolvedValue({
       data: null,
       error: { message: "insert failed" },
     });
@@ -86,10 +85,9 @@ describe("createEventWithTicketTypesHandler", () => {
   });
 
   it("throws when event insert fails", async () => {
-    (eventsChain.single as ReturnType<typeof vi.fn>).mockResolvedValue({
-      data: null,
-      error: { message: "event insert failed" },
-    });
+    eventsChain.single
+      .mockResolvedValueOnce({ data: { organizer_id: ORG_ID }, error: null })
+      .mockResolvedValueOnce({ data: null, error: { message: "event insert failed" } });
 
     await expect(createEventWithTicketTypesHandler(EVENT_DATA, TICKET_TYPES)).rejects.toThrow(
       "event insert failed",
