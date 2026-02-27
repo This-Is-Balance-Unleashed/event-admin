@@ -47,11 +47,11 @@ const DEFAULT_FIELDS: IncludeFields = {
 export function EmailPage() {
   const notify = useNotify();
 
-  // Read preset email from query string if navigated from ticket show
-  const presetEmail =
-    typeof window !== "undefined"
-      ? new URLSearchParams(window.location.search).get("email") ?? ""
-      : "";
+  // Lazy state init — only runs client-side, safe during SSR
+  const [presetEmail] = useState(() => {
+    if (typeof window === "undefined" || !window.location) return "";
+    return new URLSearchParams(window.location.search).get("email") ?? "";
+  });
 
   const [tickets, setTickets] = useState<EmailTicket[]>([]);
   const [loading, setLoading] = useState(true);
@@ -74,7 +74,7 @@ export function EmailPage() {
           search: q || undefined,
           status: s === "all" ? undefined : s,
         });
-        setTickets(data);
+        setTickets(Array.isArray(data) ? data : []);
         if (presetEmail) {
           const match = data.find((t) => t.email === presetEmail);
           if (match) setSelectedIds(new Set([match.id]));

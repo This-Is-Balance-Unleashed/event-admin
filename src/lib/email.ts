@@ -100,7 +100,7 @@ export async function sendTicketEmailsHandler(input: SendEmailInput): Promise<Se
   return { sent: sentCount, failed: [] };
 }
 
-export const fetchEmailTickets = createServerFn({ method: "GET" })
+export const fetchEmailTickets = createServerFn({ method: "POST" })
   .inputValidator((input: { search?: string; status?: string }) => input)
   .handler(({ data }) => fetchEmailTicketsHandler(data));
 
