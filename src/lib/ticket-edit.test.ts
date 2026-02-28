@@ -135,7 +135,7 @@ describe("updateTicketHandler", () => {
     await updateTicketHandler({ id: "t1", status: "used" });
     const patch = ticketsChain.update.mock.calls[0][0];
     expect(patch.status).toBe("used");
-    expect(typeof patch.checked_in_at).toBe("string");
+    expect(patch.checked_in_at).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/);
   });
 
   it("does not set checked_in_at for non-used statuses", async () => {

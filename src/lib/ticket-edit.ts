@@ -36,13 +36,20 @@ export async function fetchEditableTicketsHandler(): Promise<EditableTicket[]> {
   }));
 }
 
+type TicketPatch = {
+  name?: string;
+  ticket_type_id?: string;
+  status?: string;
+  checked_in_at?: string;
+};
+
 export async function updateTicketHandler(input: {
   id: string;
   name?: string;
   ticketTypeId?: string;
   status?: string;
 }): Promise<void> {
-  const patch: Record<string, string> = {};
+  const patch: TicketPatch = {};
   if (input.name !== undefined) patch.name = input.name;
   if (input.ticketTypeId) patch.ticket_type_id = input.ticketTypeId;
   if (input.status !== undefined) {
