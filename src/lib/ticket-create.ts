@@ -115,6 +115,15 @@ export const createTickets = createServerFn({ method: "POST" })
   .inputValidator((input: { entries: TicketCreateEntry[]; ticketTypeId: string }) => input)
   .handler(({ data }) => createTicketsHandler(data.entries, data.ticketTypeId));
 
+/** Fetch all existing ticket emails (for duplicate detection in create forms) */
+async function fetchTicketEmailsHandler(): Promise<string[]> {
+  const { data, error } = await supabaseClient.from("tickets").select("email");
+  if (error) throw new Error(toMessage(error));
+  return (data ?? []).map((r) => (r.email ?? "").toLowerCase().trim());
+}
+
+export const fetchTicketEmails = createServerFn().handler(fetchTicketEmailsHandler);
+
 /** Fetch all ticket types for the type selector (server-side, service role) */
 async function fetchTicketTypesHandler(): Promise<
   Array<{ id: string; name: string; price_in_kobo: number }>
