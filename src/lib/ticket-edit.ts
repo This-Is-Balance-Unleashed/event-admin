@@ -40,7 +40,7 @@ type TicketPatch = {
   name?: string;
   ticket_type_id?: string;
   status?: string;
-  checked_in_at?: string;
+  checked_in_at?: string | null;
 };
 
 export async function updateTicketHandler(input: {
@@ -54,7 +54,7 @@ export async function updateTicketHandler(input: {
   if (input.ticketTypeId) patch.ticket_type_id = input.ticketTypeId;
   if (input.status !== undefined) {
     patch.status = input.status;
-    if (input.status === "used") patch.checked_in_at = new Date().toISOString();
+    patch.checked_in_at = input.status === "used" ? new Date().toISOString() : null;
   }
   if (Object.keys(patch).length === 0) return;
 
