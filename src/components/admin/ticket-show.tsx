@@ -25,6 +25,9 @@ import { fetchTicketTypes } from "@/lib/ticket-create";
 
 const { Link } = tanStackRouterProvider;
 
+const TICKET_STATUSES = ["reserved", "paid", "failed", "used"] as const;
+type TicketStatus = (typeof TICKET_STATUSES)[number];
+
 function CheckInButton() {
   const record = useRecordContext();
   const [update, { isPending }] = useUpdate();
@@ -123,7 +126,9 @@ function EditTicketSection() {
   const refresh = useRefresh();
   const [name, setName] = useState("");
   const [ticketTypeId, setTicketTypeId] = useState("");
-  const [status, setStatus] = useState(record?.status ?? "");
+  const [status, setStatus] = useState<TicketStatus | "">(
+    (record?.status as TicketStatus) ?? "",
+  );
   const [ticketTypes, setTicketTypes] = useState<TicketType[]>([]);
   const [saving, setSaving] = useState(false);
 
@@ -147,7 +152,7 @@ function EditTicketSection() {
           id: String(record.id),
           name: name || undefined,
           ticketTypeId: ticketTypeId || undefined,
-          status: status || undefined,
+          status: status !== "" ? status : undefined,
         },
       });
       notify("Ticket updated", { type: "success" });
@@ -189,12 +194,12 @@ function EditTicketSection() {
         </div>
         <div>
           <Label className="text-xs text-muted-foreground mb-1 block">Status</Label>
-          <Select value={status} onValueChange={setStatus}>
+          <Select value={status} onValueChange={(v) => setStatus(v as TicketStatus)}>
             <SelectTrigger className="h-8 text-sm">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {(["reserved", "paid", "failed", "used"] as const).map((s) => (
+              {TICKET_STATUSES.map((s) => (
                 <SelectItem key={s} value={s}>
                   <TicketStatusBadge status={s} />
                 </SelectItem>
