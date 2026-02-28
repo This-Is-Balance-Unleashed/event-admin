@@ -40,10 +40,15 @@ export async function updateTicketHandler(input: {
   id: string;
   name?: string;
   ticketTypeId?: string;
+  status?: string;
 }): Promise<void> {
   const patch: Record<string, string> = {};
   if (input.name !== undefined) patch.name = input.name;
   if (input.ticketTypeId) patch.ticket_type_id = input.ticketTypeId;
+  if (input.status !== undefined) {
+    patch.status = input.status;
+    if (input.status === "used") patch.checked_in_at = new Date().toISOString();
+  }
   if (Object.keys(patch).length === 0) return;
 
   const { error } = await supabaseClient.from("tickets").update(patch).eq("id", input.id);
@@ -67,7 +72,9 @@ export const fetchEditableTickets = createServerFn({ method: "POST" }).handler((
 );
 
 export const updateTicket = createServerFn({ method: "POST" })
-  .inputValidator((input: { id: string; name?: string; ticketTypeId?: string }) => input)
+  .inputValidator(
+    (input: { id: string; name?: string; ticketTypeId?: string; status?: string }) => input,
+  )
   .handler(({ data }) => updateTicketHandler(data));
 
 export const bulkUpdateTicketType = createServerFn({ method: "POST" })

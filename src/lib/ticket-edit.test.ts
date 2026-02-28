@@ -121,6 +121,29 @@ describe("updateTicketHandler", () => {
     ticketsChain.eq.mockResolvedValueOnce({ error: { message: "Update failed" } });
     await expect(updateTicketHandler({ id: "t1", name: "Bob" })).rejects.toThrow("Update failed");
   });
+
+  it("updates status when provided", async () => {
+    ticketsChain.eq.mockResolvedValueOnce({ error: null });
+    await updateTicketHandler({ id: "t1", status: "paid" });
+    expect(ticketsChain.update).toHaveBeenCalledWith(
+      expect.objectContaining({ status: "paid" }),
+    );
+  });
+
+  it("sets checked_in_at when status is 'used'", async () => {
+    ticketsChain.eq.mockResolvedValueOnce({ error: null });
+    await updateTicketHandler({ id: "t1", status: "used" });
+    const patch = ticketsChain.update.mock.calls[0][0];
+    expect(patch.status).toBe("used");
+    expect(typeof patch.checked_in_at).toBe("string");
+  });
+
+  it("does not set checked_in_at for non-used statuses", async () => {
+    ticketsChain.eq.mockResolvedValueOnce({ error: null });
+    await updateTicketHandler({ id: "t1", status: "failed" });
+    const patch = ticketsChain.update.mock.calls[0][0];
+    expect(patch.checked_in_at).toBeUndefined();
+  });
 });
 
 describe("bulkUpdateTicketTypeHandler", () => {
