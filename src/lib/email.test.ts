@@ -187,4 +187,128 @@ describe("sendTicketEmailsHandler", () => {
     expect(result.failed).toHaveLength(0);
     expect(mockBatchSend).not.toHaveBeenCalled();
   });
+
+  it("splits 150 recipients into two batch calls of 100 and 50", async () => {
+    const manyRecipients = Array.from({ length: 150 }, (_, i) => ({
+      email: `user${i}@test.com`,
+      name: `User ${i}`,
+    }));
+
+    // First batch (100) succeeds, second batch (50) succeeds
+    mockBatchSend
+      .mockResolvedValueOnce({ data: { data: Array(100).fill({ id: "x" }) }, error: null })
+      .mockResolvedValueOnce({ data: { data: Array(50).fill({ id: "x" }) }, error: null });
+
+    const result = await sendTicketEmailsHandler({
+      recipients: manyRecipients,
+      subject: "Batch test",
+      message: "",
+      includeFields,
+    });
+
+    expect(mockBatchSend).toHaveBeenCalledTimes(2);
+    expect(mockBatchSend.mock.calls[0][0]).toHaveLength(100);
+    expect(mockBatchSend.mock.calls[1][0]).toHaveLength(50);
+    expect(result.sent).toBe(150);
+    expect(result.failed).toHaveLength(0);
+  });
+
+  it("marks only the failing batch's recipients as failed", async () => {
+    const manyRecipients = Array.from({ length: 120 }, (_, i) => ({
+      email: `user${i}@test.com`,
+      name: `User ${i}`,
+    }));
+
+    // First batch succeeds, second fails
+    mockBatchSend
+      .mockResolvedValueOnce({ data: { data: Array(100).fill({ id: "x" }) }, error: null })
+      .mockResolvedValueOnce({ data: null, error: { message: "Rate limit" } });
+
+    const result = await sendTicketEmailsHandler({
+      recipients: manyRecipients,
+      subject: "Partial fail",
+      message: "",
+      includeFields,
+    });
+
+    expect(result.sent).toBe(100);
+    expect(result.failed).toHaveLength(20);
+    expect(result.failed[0].email).toBe("user100@test.com");
+    expect(result.failed[0].error).toContain("Rate limit");
+  });
+
+  it("flags invalid email addresses without calling Resend", async () => {
+    const result = await sendTicketEmailsHandler({
+      recipients: [{ email: "not-an-email", name: "Bad Guy" }],
+      subject: "Test",
+      message: "",
+      includeFields,
+    });
+
+    expect(mockBatchSend).not.toHaveBeenCalled();
+    expect(result.sent).toBe(0);
+    expect(result.failed).toHaveLength(1);
+    expect(result.failed[0].email).toBe("not-an-email");
+    expect(result.failed[0].error).toContain("Invalid email address");
+  });
+
+  it("sends valid addresses and flags invalid ones in a mixed list", async () => {
+    mockBatchSend.mockResolvedValueOnce({ data: { data: [{ id: "msg1" }] }, error: null });
+
+    const result = await sendTicketEmailsHandler({
+      recipients: [
+        { email: "good@example.com", name: "Good" },
+        { email: "bad-address", name: "Bad" },
+        { email: "Jane Doe <jane@example.com>", name: "Jane" },
+        { email: "missing-at-sign.com", name: "Missing AT" },
+      ],
+      subject: "Mixed",
+      message: "",
+      includeFields,
+    });
+
+    expect(mockBatchSend).toHaveBeenCalledTimes(1);
+    const sentEmails = mockBatchSend.mock.calls[0][0];
+    expect(sentEmails).toHaveLength(2); // good@example.com and Jane Doe <...>
+    expect(result.failed).toHaveLength(2);
+    expect(result.failed.map((f) => f.email)).toContain("bad-address");
+    expect(result.failed.map((f) => f.email)).toContain("missing-at-sign.com");
+  });
+
+  it("returns early with all failed when every address is invalid", async () => {
+    const result = await sendTicketEmailsHandler({
+      recipients: [
+        { email: "nope", name: "A" },
+        { email: "also nope", name: "B" },
+      ],
+      subject: "All bad",
+      message: "",
+      includeFields,
+    });
+
+    expect(mockBatchSend).not.toHaveBeenCalled();
+    expect(result.sent).toBe(0);
+    expect(result.failed).toHaveLength(2);
+  });
+
+  it("100 recipients exactly uses a single batch call", async () => {
+    const exactHundred = Array.from({ length: 100 }, (_, i) => ({
+      email: `user${i}@test.com`,
+    }));
+
+    mockBatchSend.mockResolvedValueOnce({
+      data: { data: Array(100).fill({ id: "x" }) },
+      error: null,
+    });
+
+    const result = await sendTicketEmailsHandler({
+      recipients: exactHundred,
+      subject: "Exact 100",
+      message: "",
+      includeFields,
+    });
+
+    expect(mockBatchSend).toHaveBeenCalledTimes(1);
+    expect(result.sent).toBe(100);
+  });
 });

@@ -81,30 +81,61 @@ export async function fetchEmailTicketsHandler(
   }));
 }
 
+const RESEND_BATCH_LIMIT = 100;
+
+// Accepts plain `email@example.com` or `Name <email@example.com>`
+const EMAIL_RE = /^(?:[^<@\s]+@[^@\s]+\.[^@\s]+|.+<[^<@\s]+@[^@\s]+\.[^@\s]+>)$/;
+
+function isValidEmailAddress(value: string): boolean {
+  return EMAIL_RE.test(value.trim());
+}
+
 export async function sendTicketEmailsHandler(input: SendEmailInput): Promise<SendEmailResult> {
   if (input.recipients.length === 0) return { sent: 0, failed: [] };
 
   const resend = getResend();
   const fromEmail = process.env.RESEND_FROM_EMAIL ?? "events@balanceunleashed.org";
 
-  const emails = input.recipients.map((r) => ({
+  const failed: Array<{ email: string; error: string }> = [];
+
+  // Pre-validate every recipient email before touching Resend
+  const validRecipients = input.recipients.filter((r) => {
+    if (!isValidEmailAddress(r.email)) {
+      failed.push({
+        email: r.email,
+        error: `Invalid email address: must be email@example.com or Name <email@example.com>`,
+      });
+      return false;
+    }
+    return true;
+  });
+
+  if (validRecipients.length === 0) return { sent: 0, failed };
+
+  const emails = validRecipients.map((r) => ({
     from: `Hit Refresh Conference <${fromEmail}>`,
     to: r.email,
     subject: input.subject,
     html: buildEmailHtml(r, input.includeFields, input.message, input.subject),
   }));
 
-  const { data, error } = await resend.batch.send(emails);
+  // Split into batches of ≤100 (Resend batch limit)
+  let sent = 0;
 
-  if (error) {
-    return {
-      sent: 0,
-      failed: input.recipients.map((r) => ({ email: r.email, error: toMessage(error) })),
-    };
+  for (let i = 0; i < emails.length; i += RESEND_BATCH_LIMIT) {
+    const chunk = emails.slice(i, i + RESEND_BATCH_LIMIT);
+    const { data, error } = await resend.batch.send(chunk);
+    if (error) {
+      // Mark every recipient in this chunk as failed
+      for (const r of validRecipients.slice(i, i + RESEND_BATCH_LIMIT)) {
+        failed.push({ email: r.email, error: toMessage(error) });
+      }
+    } else {
+      sent += (data?.data ?? []).length;
+    }
   }
 
-  const sentCount = (data?.data ?? []).length;
-  return { sent: sentCount, failed: [] };
+  return { sent, failed };
 }
 
 export const fetchEmailTickets = createServerFn({ method: "POST" })
