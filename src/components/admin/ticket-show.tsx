@@ -123,6 +123,7 @@ function EditTicketSection() {
   const refresh = useRefresh();
   const [name, setName] = useState("");
   const [ticketTypeId, setTicketTypeId] = useState("");
+  const [status, setStatus] = useState(record?.status ?? "");
   const [ticketTypes, setTicketTypes] = useState<TicketType[]>([]);
   const [saving, setSaving] = useState(false);
 
@@ -130,6 +131,7 @@ function EditTicketSection() {
     if (!record) return;
     setName(record.name ?? "");
     setTicketTypeId(record.ticket_type_id ?? "");
+    setStatus(record.status ?? "");
     fetchTicketTypes().then((types) => setTicketTypes(Array.isArray(types) ? types : []));
     // Dependencies intentionally limited to record.id to avoid re-fetching on every record update
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -145,6 +147,7 @@ function EditTicketSection() {
           id: String(record.id),
           name: name || undefined,
           ticketTypeId: ticketTypeId || undefined,
+          status: status || undefined,
         },
       });
       notify("Ticket updated", { type: "success" });
@@ -179,6 +182,21 @@ function EditTicketSection() {
               {ticketTypes.map((t) => (
                 <SelectItem key={t.id} value={t.id}>
                   {t.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <Label className="text-xs text-muted-foreground mb-1 block">Status</Label>
+          <Select value={status} onValueChange={setStatus}>
+            <SelectTrigger className="h-8 text-sm">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {(["reserved", "paid", "failed", "used"] as const).map((s) => (
+                <SelectItem key={s} value={s}>
+                  <TicketStatusBadge status={s} />
                 </SelectItem>
               ))}
             </SelectContent>
