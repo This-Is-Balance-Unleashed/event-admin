@@ -19,6 +19,15 @@ const allFields = {
   reference: true,
 };
 
+const defaultFields = {
+  name: false,
+  ticketType: false,
+  qrCode: false,
+  dateVenue: true,
+  pricePaid: false,
+  reference: false,
+};
+
 describe("buildEmailHtml", () => {
   it("includes the custom message", () => {
     const html = buildEmailHtml(baseRecipient, allFields, "Hello from admin", "Your Ticket");
@@ -89,5 +98,44 @@ describe("buildEmailHtml", () => {
   it("uses brand green color in output", () => {
     const html = buildEmailHtml(baseRecipient, allFields, "", "");
     expect(html).toContain("#39B54A");
+  });
+
+  // Header says "Hit Refresh" not "Hit Refresh Conference"
+  it('header says "Hit Refresh" not "Hit Refresh Conference"', () => {
+    const html = buildEmailHtml({ email: "a@b.com" }, defaultFields, "", "Test");
+    expect(html).toContain(">Hit Refresh<");
+    expect(html).not.toContain(">Hit Refresh Conference<");
+  });
+
+  // Date row includes time info
+  it("date row includes registration and event time", () => {
+    const html = buildEmailHtml({ email: "a@b.com" }, defaultFields, "", "Test");
+    expect(html).toContain("Registration 8am");
+    expect(html).toContain("Event 9am");
+  });
+
+  // Zoom button renders when zoomUrl is set
+  it("renders zoom button when zoomUrl is set and qrCode is true", () => {
+    const html = buildEmailHtml(
+      { email: "a@b.com", zoomUrl: "https://zoom.us/test" },
+      { ...defaultFields, qrCode: true },
+      "",
+      "Test",
+    );
+    expect(html).toContain("Join Hit Refresh");
+    expect(html).toContain("https://zoom.us/test");
+    expect(html).not.toContain("View Your QR Code");
+  });
+
+  // QR button still works when qrCodeUrl is set (no zoomUrl)
+  it("renders QR button when qrCodeUrl is set and no zoomUrl", () => {
+    const html = buildEmailHtml(
+      { email: "a@b.com", qrCodeUrl: "https://qr.example.com/1" },
+      { ...defaultFields, qrCode: true },
+      "",
+      "Test",
+    );
+    expect(html).toContain("View Your QR Code");
+    expect(html).not.toContain("Join Hit Refresh");
   });
 });

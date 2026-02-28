@@ -121,7 +121,8 @@ export async function getReconciliationDataHandler(
     .select(
       "id, email, name, paystack_reference, ticket_type_id, price_paid, status, group_booking_id, event_id",
     )
-    .eq("status", "reserved");
+    .eq("status", "reserved")
+    .not("paystack_reference", "ilike", "test_%");
 
   if (error) throw error;
   if (!tickets) return [];

@@ -75,6 +75,7 @@ function EventDetailsStep({
         </Label>
         <Input
           id="ev-title"
+          // eslint-disable-next-line jsx-a11y/no-autofocus
           autoFocus
           value={form.title}
           onChange={(e) => onChange({ title: e.target.value })}

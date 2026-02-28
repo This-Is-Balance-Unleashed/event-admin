@@ -309,7 +309,7 @@ export const FilterButton = (props: FilterButtonProps) => {
         <DropdownMenuContent align="start" className="w-56">
           {allTogglableFilters
             .filter((filterElement) => isValidElement(filterElement))
-            .map((filterElement, index: number) => (
+            .map((filterElement) => (
               <FilterButtonMenuItem
                 key={(filterElement.props as any).source}
                 filter={filterElement}
@@ -422,7 +422,11 @@ export const FilterButtonMenuItem = React.forwardRef<HTMLDivElement, FilterButto
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
           if (!filter.props.disabled) {
-            displayed ? handleHide() : handleShow();
+            if (displayed) {
+              handleHide();
+            } else {
+              handleShow();
+            }
           }
         }
       },

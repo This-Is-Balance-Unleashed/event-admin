@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNotify } from "ra-core";
 import { Mail, Send, CheckSquare, Square, Search, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -29,7 +29,7 @@ See you there!`;
 const FIELD_OPTIONS: { key: keyof IncludeFields; label: string }[] = [
   { key: "name", label: "Attendee Name" },
   { key: "ticketType", label: "Ticket Type" },
-  { key: "qrCode", label: "QR Code Button" },
+  { key: "qrCode", label: "Action Button (QR / Zoom)" },
   { key: "dateVenue", label: "Event Date & Venue" },
   { key: "pricePaid", label: "Price Paid" },
   { key: "reference", label: "Payment Reference" },
@@ -43,6 +43,42 @@ const DEFAULT_FIELDS: IncludeFields = {
   pricePaid: false,
   reference: false,
 };
+
+const ZOOM_URL = "https://zoom.us/j/99036993644?pwd=wrENKh7Ii7wOsP3U5dtJYxSKpV7hrc.1";
+
+type EmailTemplateConfig = {
+  key: string;
+  label: string;
+  subject: string;
+  message: string;
+  fields: IncludeFields;
+  zoomUrl?: string;
+};
+
+const TEMPLATES: EmailTemplateConfig[] = [
+  {
+    key: "general",
+    label: "General Ticket",
+    subject: DEFAULT_SUBJECT,
+    message: DEFAULT_MESSAGE,
+    fields: DEFAULT_FIELDS,
+  },
+  {
+    key: "virtual",
+    label: "Virtual Ticket (Zoom)",
+    subject: "Join Hit Refresh — Your Zoom Link",
+    message: `You're registered for the virtual stream of Hit Refresh 2026!\n\nJoin Hit Refresh\nMeeting ID: 990 3699 3644\nPasscode: 775309`,
+    fields: {
+      name: true,
+      ticketType: true,
+      qrCode: true,
+      dateVenue: true,
+      pricePaid: false,
+      reference: false,
+    },
+    zoomUrl: ZOOM_URL,
+  },
+];
 
 export function EmailPage() {
   const notify = useNotify();
@@ -64,6 +100,22 @@ export function EmailPage() {
   const [includeFields, setIncludeFields] = useState<IncludeFields>(DEFAULT_FIELDS);
   const [sending, setSending] = useState(false);
   const [previewHtml, setPreviewHtml] = useState("");
+  const [typeFilter, setTypeFilter] = useState<string>("all");
+  const [templateKey, setTemplateKey] = useState<string>("general");
+
+  const ticketTypeOptions = useMemo(
+    () => [...new Set(tickets.map((t) => t.ticketTypeName).filter(Boolean))] as string[],
+    [tickets],
+  );
+
+  const applyTemplate = (key: string) => {
+    const tpl = TEMPLATES.find((t) => t.key === key);
+    if (!tpl) return;
+    setTemplateKey(key);
+    setSubject(tpl.subject);
+    setMessage(tpl.message);
+    setIncludeFields(tpl.fields);
+  };
 
   // Load all tickets once — filter client-side to avoid server param serialisation issues
   useEffect(() => {
@@ -91,7 +143,8 @@ export function EmailPage() {
     const matchesSearch =
       !q || t.email.toLowerCase().includes(q) || (t.name ?? "").toLowerCase().includes(q);
     const matchesStatus = statusFilter === "all" || t.status === statusFilter;
-    return matchesSearch && matchesStatus;
+    const matchesType = typeFilter === "all" || t.ticketTypeName === typeFilter;
+    return matchesSearch && matchesStatus && matchesType;
   });
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -105,7 +158,11 @@ export function EmailPage() {
   const toggleRow = (id: string) => {
     setSelectedIds((prev) => {
       const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
       return next;
     });
   };
@@ -152,6 +209,7 @@ export function EmailPage() {
         reference: "PSK-PREVIEW",
         qrCodeUrl: "https://example.com/qr/preview",
       };
+      const selectedTemplate = TEMPLATES.find((t) => t.key === templateKey);
       setPreviewHtml(
         buildEmailHtml(
           {
@@ -161,6 +219,7 @@ export function EmailPage() {
             pricePaid: preview.pricePaid,
             reference: preview.reference,
             qrCodeUrl: preview.qrCodeUrl,
+            zoomUrl: selectedTemplate?.zoomUrl,
           },
           includeFields,
           message,
@@ -169,12 +228,13 @@ export function EmailPage() {
       );
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [allRecipients.length, includeFields, message, subject]);
+  }, [allRecipients.length, includeFields, message, subject, templateKey]);
 
   const handleSend = async () => {
     if (allRecipients.length === 0) return;
     setSending(true);
     try {
+      const selectedTemplate = TEMPLATES.find((t) => t.key === templateKey);
       const result = await sendTicketEmails({
         data: {
           recipients: allRecipients.map((r) => ({
@@ -184,6 +244,7 @@ export function EmailPage() {
             pricePaid: r.pricePaid,
             reference: r.reference,
             qrCodeUrl: r.qrCodeUrl,
+            zoomUrl: selectedTemplate?.zoomUrl,
           })),
           subject,
           message,
@@ -246,6 +307,19 @@ export function EmailPage() {
                     <SelectItem value="reserved">Reserved</SelectItem>
                     <SelectItem value="used">Used</SelectItem>
                     <SelectItem value="failed">Failed</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Select value={typeFilter} onValueChange={setTypeFilter}>
+                  <SelectTrigger className="w-36 h-8 text-sm">
+                    <SelectValue placeholder="All types" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All types</SelectItem>
+                    {ticketTypeOptions.map((name) => (
+                      <SelectItem key={name} value={name}>
+                        {name}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
@@ -344,6 +418,22 @@ export function EmailPage() {
         {/* RIGHT — Compose + Preview */}
         <div className="flex flex-col gap-4">
           <div className="rounded-lg border bg-card p-4 flex flex-col gap-4">
+            <div>
+              <Label className="text-sm font-medium mb-1 block">Template</Label>
+              <Select value={templateKey} onValueChange={applyTemplate}>
+                <SelectTrigger className="h-8 text-sm">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {TEMPLATES.map((t) => (
+                    <SelectItem key={t.key} value={t.key}>
+                      {t.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
             <div>
               <Label className="text-sm font-medium mb-1.5 block">Subject</Label>
               <Input

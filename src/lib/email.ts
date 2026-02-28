@@ -62,12 +62,14 @@ export async function fetchEmailTicketsHandler(
   const { data, error } = await query;
   if (error || !data) throw new Error(toMessage(error));
 
+  const realData = data.filter((row) => !row.paystack_reference?.toLowerCase().startsWith("test_"));
+
   // Fetch ticket type names separately and build a lookup map
   const { data: ticketTypes } = await supabaseClient.from("ticket_types").select("id, name");
 
   const typeMap = new Map((ticketTypes ?? []).map((t) => [t.id, t.name as string]));
 
-  return data.map((row) => ({
+  return realData.map((row) => ({
     id: row.id,
     email: row.email,
     name: row.name ?? undefined,

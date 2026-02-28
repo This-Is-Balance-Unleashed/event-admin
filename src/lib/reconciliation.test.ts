@@ -88,7 +88,8 @@ describe("getReconciliationDataHandler", () => {
     return {
       from: vi.fn().mockReturnValue({
         select: vi.fn().mockReturnThis(),
-        eq: vi.fn().mockResolvedValue({ data: ticketData, error: ticketError }),
+        eq: vi.fn().mockReturnThis(),
+        not: vi.fn().mockResolvedValue({ data: ticketData, error: ticketError }),
       }),
     } as unknown as SupabaseClient;
   }

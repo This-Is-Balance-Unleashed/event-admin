@@ -5,6 +5,7 @@ export type EmailRecipient = {
   pricePaid?: number;
   reference?: string;
   qrCodeUrl?: string;
+  zoomUrl?: string;
 };
 
 export type IncludeFields = {
@@ -59,29 +60,48 @@ export function buildEmailHtml(
       : "",
     fields.pricePaid && priceFormatted ? fieldRow("Price Paid", priceFormatted) : "",
     fields.reference && recipient.reference ? fieldRow("Reference", recipient.reference) : "",
-    fields.dateVenue ? fieldRow("Date", EVENT.date) : "",
+    fields.dateVenue ? fieldRow("Date", `${EVENT.date} · Registration 8am | Event 9am`) : "",
     fields.dateVenue ? fieldRow("Venue", EVENT.venue) : "",
   ]
     .filter(Boolean)
     .join("");
 
-  const qrButton =
-    fields.qrCode && recipient.qrCodeUrl
-      ? `
-    <tr>
-      <td style="padding:24px 0 8px;text-align:center;">
-        <a href="${recipient.qrCodeUrl}"
-           style="display:inline-block;background-color:${BRAND.green};color:${BRAND.white};
-                  text-decoration:none;font-family:Arial,sans-serif;font-size:16px;
-                  font-weight:bold;padding:14px 32px;border-radius:6px;">
-          View Your QR Code
-        </a>
-        <p style="margin:8px 0 0;font-size:11px;color:${BRAND.mutedText};font-family:Arial,sans-serif;">
-          Show this at the entrance on the event day
-        </p>
-      </td>
-    </tr>`
-      : "";
+  const ctaButton = (() => {
+    if (!fields.qrCode) return "";
+    if (recipient.zoomUrl) {
+      return `
+  <tr>
+    <td style="padding:24px 0 8px;text-align:center;">
+      <a href="${recipient.zoomUrl}"
+         style="display:inline-block;background-color:${BRAND.green};color:${BRAND.white};
+                text-decoration:none;font-family:Arial,sans-serif;font-size:16px;
+                font-weight:bold;padding:14px 32px;border-radius:6px;">
+        Join Hit Refresh
+      </a>
+      <p style="margin:8px 0 0;font-size:11px;color:${BRAND.mutedText};font-family:Arial,sans-serif;">
+        Use this link to join the virtual stream on the event day
+      </p>
+    </td>
+  </tr>`;
+    }
+    if (recipient.qrCodeUrl) {
+      return `
+  <tr>
+    <td style="padding:24px 0 8px;text-align:center;">
+      <a href="${recipient.qrCodeUrl}"
+         style="display:inline-block;background-color:${BRAND.green};color:${BRAND.white};
+                text-decoration:none;font-family:Arial,sans-serif;font-size:16px;
+                font-weight:bold;padding:14px 32px;border-radius:6px;">
+        View Your QR Code
+      </a>
+      <p style="margin:8px 0 0;font-size:11px;color:${BRAND.mutedText};font-family:Arial,sans-serif;">
+        Show this at the entrance on the event day
+      </p>
+    </td>
+  </tr>`;
+    }
+    return "";
+  })();
 
   const customMessageBlock = message
     ? `
@@ -110,9 +130,7 @@ export function buildEmailHtml(
           <!-- Header -->
           <tr>
             <td style="background-color:${BRAND.green};padding:28px 32px;">
-              <p style="margin:0;font-size:22px;font-weight:bold;color:${BRAND.white};font-family:Georgia,'Times New Roman',serif;letter-spacing:-0.02em;">
-                Hit Refresh Conference
-              </p>
+              <p style="margin:0;font-size:22px;font-weight:bold;color:${BRAND.white};font-family:Georgia,'Times New Roman',serif;letter-spacing:-0.02em;">Hit Refresh</p>
               <p style="margin:6px 0 0;font-size:13px;color:rgba(255,255,255,0.85);font-family:Arial,sans-serif;">
                 Career and Wellness Summit 2026
               </p>
@@ -145,7 +163,7 @@ export function buildEmailHtml(
                     : ""
                 }
 
-                ${qrButton}
+                ${ctaButton}
 
               </table>
             </td>

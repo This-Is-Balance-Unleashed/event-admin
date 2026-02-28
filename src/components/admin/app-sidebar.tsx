@@ -14,6 +14,7 @@ import {
   CalendarPlus,
   CreditCard,
   MailPlus,
+  Pencil,
   RefreshCw,
   ScanLine,
   ShieldCheck,
@@ -83,6 +84,7 @@ export function AppSidebar() {
               <SendEmailMenuItem onClick={handleClick} />
               <CheckInMenuItem onClick={handleClick} />
               <CreateTicketsMenuItem onClick={handleClick} />
+              <EditTicketsMenuItem onClick={handleClick} />
               <PaymentsMenuItem onClick={handleClick} />
               <AdminsMenuItem onClick={handleClick} />
               <ReconciliationMenuItem onClick={handleClick} />
@@ -172,6 +174,20 @@ export const CreateTicketsMenuItem = ({ onClick }: { onClick?: () => void }) => 
         <Link to="/admin/ticket-create" onClick={onClick}>
           <TicketPlus />
           Create Tickets
+        </Link>
+      </SidebarMenuButton>
+    </SidebarMenuItem>
+  );
+};
+
+export const EditTicketsMenuItem = ({ onClick }: { onClick?: () => void }) => {
+  const match = useMatch({ path: "/admin/tickets/edit", end: false });
+  return (
+    <SidebarMenuItem>
+      <SidebarMenuButton asChild isActive={!!match}>
+        <Link to="/admin/tickets/edit" onClick={onClick}>
+          <Pencil />
+          Edit Tickets
         </Link>
       </SidebarMenuButton>
     </SidebarMenuItem>

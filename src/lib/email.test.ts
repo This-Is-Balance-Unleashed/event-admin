@@ -83,6 +83,38 @@ describe("fetchEmailTicketsHandler", () => {
 
     await expect(fetchEmailTicketsHandler({})).rejects.toThrow("DB error");
   });
+
+  it("excludes tickets with paystack_reference starting with test_", async () => {
+    ticketsChain.order.mockResolvedValueOnce({
+      data: [
+        {
+          id: "t-real",
+          email: "real@test.com",
+          name: "Real User",
+          status: "paid",
+          price_paid: 1000000,
+          paystack_reference: "PSK-REAL",
+          qr_code_url: null,
+          ticket_type_id: "tt1",
+        },
+        {
+          id: "t-test",
+          email: "test@test.com",
+          name: "Test User",
+          status: "paid",
+          price_paid: 0,
+          paystack_reference: "test_abc123",
+          qr_code_url: null,
+          ticket_type_id: "tt1",
+        },
+      ],
+      error: null,
+    });
+
+    const result = await fetchEmailTicketsHandler({});
+    expect(result).toHaveLength(1);
+    expect(result[0].id).toBe("t-real");
+  });
 });
 
 describe("sendTicketEmailsHandler", () => {

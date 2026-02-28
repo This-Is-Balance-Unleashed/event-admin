@@ -147,6 +147,7 @@ export function CheckInForm() {
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
           <Input
+            // eslint-disable-next-line jsx-a11y/no-autofocus
             autoFocus
             className="pl-9 h-12 text-base"
             placeholder="Search by name, email or QR code…"
