@@ -131,6 +131,8 @@ function EditTicketSection() {
     setName(record.name ?? "");
     setTicketTypeId(record.ticket_type_id ?? "");
     fetchTicketTypes().then((types) => setTicketTypes(Array.isArray(types) ? types : []));
+    // Dependencies intentionally limited to record.id to avoid re-fetching on every record update
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [record?.id]);
 
   if (!record) return null;

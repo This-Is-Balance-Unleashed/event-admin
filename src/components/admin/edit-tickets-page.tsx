@@ -70,6 +70,7 @@ function InlineNameEdit({
           if (e.key === "Enter") save();
           if (e.key === "Escape") setEditing(false);
         }}
+        // eslint-disable-next-line jsx-a11y/no-autofocus
         autoFocus
       />
       <button onClick={save} disabled={saving} className="text-green-600 hover:text-green-700">
@@ -111,7 +112,7 @@ export function EditTicketsPage() {
         notify(`Failed to load: ${e instanceof Error ? e.message : String(e)}`, { type: "error" }),
       )
       .finally(() => setLoading(false));
-  }, []);
+  }, [notify]);
 
   const allSelected =
     visibleTickets.length > 0 && visibleTickets.every((t) => selectedIds.has(t.id));
@@ -135,7 +136,11 @@ export function EditTicketsPage() {
   const toggleRow = (id: string) => {
     setSelectedIds((prev) => {
       const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
       return next;
     });
   };

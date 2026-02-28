@@ -110,6 +110,7 @@ function SingleForm({
         <Input
           id="single-email"
           type="email"
+          // eslint-disable-next-line jsx-a11y/no-autofocus
           autoFocus
           placeholder="attendee@example.com"
           value={email}
@@ -194,6 +195,7 @@ function BulkForm({
         </Label>
         <Textarea
           id="bulk-input"
+          // eslint-disable-next-line jsx-a11y/no-autofocus
           autoFocus
           className="font-mono text-sm min-h-40 resize-y"
           placeholder={"john@example.com, John Doe\njane@example.com\nbob@example.com, Bob Smith"}
