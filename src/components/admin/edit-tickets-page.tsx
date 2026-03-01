@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNotify } from "ra-core";
 import { Pencil, Check, X, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -96,10 +96,14 @@ export function EditTicketsPage() {
   const [moveToTypeId, setMoveToTypeId] = useState("");
   const [applying, setApplying] = useState(false);
 
-  const visibleTickets = tickets.filter((t) => {
+  const visibleTickets = useMemo(() => {
     const q = search.toLowerCase();
-    return !q || t.email.toLowerCase().includes(q) || (t.name ?? "").toLowerCase().includes(q);
-  });
+    return !q
+      ? tickets
+      : tickets.filter(
+          (t) => t.email.toLowerCase().includes(q) || (t.name ?? "").toLowerCase().includes(q),
+        );
+  }, [tickets, search]);
 
   useEffect(() => {
     setLoading(true);

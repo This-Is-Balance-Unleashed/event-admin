@@ -46,6 +46,8 @@ const DEFAULT_FIELDS: IncludeFields = {
 
 const ZOOM_URL = "https://zoom.us/j/99036993644?pwd=wrENKh7Ii7wOsP3U5dtJYxSKpV7hrc.1";
 
+const EMAIL_SPLIT_RE = /[\n,;]/;
+
 type EmailTemplateConfig = {
   key: string;
   label: string;
@@ -138,14 +140,16 @@ export function EmailPage() {
   }, []);
 
   // Client-side filtering — instant, no server roundtrip
-  const visibleTickets = tickets.filter((t) => {
+  const visibleTickets = useMemo(() => {
     const q = search.toLowerCase();
-    const matchesSearch =
-      !q || t.email.toLowerCase().includes(q) || (t.name ?? "").toLowerCase().includes(q);
-    const matchesStatus = statusFilter === "all" || t.status === statusFilter;
-    const matchesType = typeFilter === "all" || t.ticketTypeName === typeFilter;
-    return matchesSearch && matchesStatus && matchesType;
-  });
+    return tickets.filter((t) => {
+      const matchesSearch =
+        !q || t.email.toLowerCase().includes(q) || (t.name ?? "").toLowerCase().includes(q);
+      const matchesStatus = statusFilter === "all" || t.status === statusFilter;
+      const matchesType = typeFilter === "all" || t.ticketTypeName === typeFilter;
+      return matchesSearch && matchesStatus && matchesType;
+    });
+  }, [tickets, search, statusFilter, typeFilter]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
@@ -187,16 +191,26 @@ export function EmailPage() {
     setIncludeFields((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
-  const selectedTickets = tickets.filter((t) => selectedIds.has(t.id));
-  const pastedList = pasteEmails
-    .split(/[\n,;]/)
-    .map((e) => e.trim())
-    .filter((e) => e.includes("@"))
-    .map((e) => ({ id: `paste-${e}`, email: e, status: "unknown" }) as EmailTicket);
-  const allRecipients = [
-    ...selectedTickets,
-    ...pastedList.filter((p) => !selectedTickets.find((t) => t.email === p.email)),
-  ];
+  const selectedTickets = useMemo(
+    () => tickets.filter((t) => selectedIds.has(t.id)),
+    [tickets, selectedIds],
+  );
+  const pastedList = useMemo(
+    () =>
+      pasteEmails
+        .split(EMAIL_SPLIT_RE)
+        .map((e) => e.trim())
+        .filter((e) => e.includes("@"))
+        .map((e) => ({ id: `paste-${e}`, email: e, status: "unknown" }) as EmailTicket),
+    [pasteEmails],
+  );
+  const allRecipients = useMemo(
+    () => [
+      ...selectedTickets,
+      ...pastedList.filter((p) => !selectedTickets.find((t) => t.email === p.email)),
+    ],
+    [selectedTickets, pastedList],
+  );
 
   // Live preview — dynamic import keeps template out of initial bundle
   useEffect(() => {

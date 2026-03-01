@@ -126,9 +126,7 @@ function EditTicketSection() {
   const refresh = useRefresh();
   const [name, setName] = useState("");
   const [ticketTypeId, setTicketTypeId] = useState("");
-  const [status, setStatus] = useState<TicketStatus | "">(
-    (record?.status as TicketStatus) ?? "",
-  );
+  const [status, setStatus] = useState<TicketStatus | "">((record?.status as TicketStatus) ?? "");
   const [ticketTypes, setTicketTypes] = useState<TicketType[]>([]);
   const [saving, setSaving] = useState(false);
 

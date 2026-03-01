@@ -125,9 +125,7 @@ describe("updateTicketHandler", () => {
   it("updates status when provided", async () => {
     ticketsChain.eq.mockResolvedValueOnce({ error: null });
     await updateTicketHandler({ id: "t1", status: "paid" });
-    expect(ticketsChain.update).toHaveBeenCalledWith(
-      expect.objectContaining({ status: "paid" }),
-    );
+    expect(ticketsChain.update).toHaveBeenCalledWith(expect.objectContaining({ status: "paid" }));
   });
 
   it("sets checked_in_at when status is 'used'", async () => {
